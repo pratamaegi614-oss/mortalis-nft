@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Flame,
@@ -20,6 +20,14 @@ import {
   Twitter,
   Github,
   ChevronRight,
+  Copy,
+  Check,
+  ExternalLink,
+  Wallet,
+  Loader2,
+  AlertTriangle,
+  Minus,
+  Plus,
 } from "lucide-react";
 import "./App.css";
 import slimeImg from "./sprites/slime.png";
@@ -27,6 +35,18 @@ import wispImg from "./sprites/wisp.png";
 import skitterImg from "./sprites/skitter.png";
 import mosslingImg from "./sprites/mossling.png";
 import hatchboxImg from "./sprites/hatchbox.png";
+import { BASE_CHAIN_ID, shortAddress, useWallet } from "./lib/wallet";
+import {
+  CONTRACT_ADDRESS,
+  MAX_PER_TX,
+  MINT_PRICE_ETH,
+  TOTAL_SUPPLY,
+  basescanAddressUrl,
+  basescanTxUrl,
+  isContractConfigured,
+  mint as sendMint,
+  totalEthForQuantity,
+} from "./lib/mint";
 
 type Species = {
   key: string;
@@ -319,16 +339,53 @@ function Tape() {
 }
 
 function App() {
-  const [petsAlive, setPetsAlive] = useState(4996);
-  const [petsBurned, setPetsBurned] = useState(4);
+  const wallet = useWallet();
+  const [quantity, setQuantity] = useState(1);
+  const [copied, setCopied] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [txPending, setTxPending] = useState(false);
+  const [txError, setTxError] = useState<string | null>(null);
+
+  const totalEth = useMemo(() => totalEthForQuantity(quantity), [quantity]);
+  const onBase = wallet.chainId === BASE_CHAIN_ID;
+  const contractConfigured = isContractConfigured();
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setPetsAlive((p) => Math.max(4250, p - (Math.random() < 0.5 ? 1 : 0)));
-      setPetsBurned((p) => Math.min(750, p + (Math.random() < 0.5 ? 1 : 0)));
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 1600);
+    return () => clearTimeout(t);
+  }, [copied]);
+
+  const handleMint = async () => {
+    setTxError(null);
+    if (!wallet.address) {
+      await wallet.connect();
+      return;
+    }
+    if (!onBase) {
+      await wallet.switchToBase();
+      return;
+    }
+    setTxPending(true);
+    try {
+      const hash = await sendMint(wallet.address, quantity);
+      setTxHash(hash);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Mint failed";
+      setTxError(msg);
+    } finally {
+      setTxPending(false);
+    }
+  };
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+    } catch {
+      /* noop */
+    }
+  };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--mort-bg)", color: "var(--mort-bone)" }}>
@@ -361,9 +418,44 @@ function App() {
             <NavLink label="How" target="how" />
             <NavLink label="Roadmap" target="roadmap" />
           </nav>
-          <a href="#box" className="pixel-btn" style={{ fontSize: 10 }}>
-            Enter Hatchery
-          </a>
+          <div className="flex items-center gap-3">
+            {wallet.address ? (
+              <div
+                className="flex items-center gap-2 px-3 py-2"
+                style={{
+                  background: "var(--mort-surface)",
+                  border: `2px solid ${onBase ? "var(--mort-green)" : "var(--mort-orange-deep)"}`,
+                }}
+              >
+                <span
+                  className="inline-block w-2 h-2"
+                  style={{
+                    background: onBase
+                      ? "var(--mort-green)"
+                      : "var(--mort-orange-deep)",
+                    boxShadow: onBase
+                      ? "0 0 6px var(--mort-green)"
+                      : "0 0 6px var(--mort-orange-deep)",
+                  }}
+                />
+                <span
+                  className="font-display"
+                  style={{ fontSize: 9, color: "var(--mort-bone)" }}
+                >
+                  {shortAddress(wallet.address)}
+                </span>
+              </div>
+            ) : (
+              <button
+                onClick={() => wallet.connect()}
+                disabled={wallet.connecting}
+                className="pixel-btn"
+                style={{ fontSize: 10 }}
+              >
+                {wallet.connecting ? "Connecting…" : "Connect Wallet"}
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -464,59 +556,189 @@ function App() {
         </div>
       </section>
 
-      {/* Stats row */}
+      {/* Mint Progress / Contract panel */}
       <section
-        style={{ background: "var(--mort-surface)", borderBottom: "2px solid var(--mort-line)" }}
+        style={{
+          background: "var(--mort-surface)",
+          borderBottom: "2px solid var(--mort-line)",
+        }}
       >
-        <div className="mx-auto max-w-6xl px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div>
-            <div
-              className="font-display animate-flicker"
-              style={{ fontSize: 22, color: "var(--mort-green)" }}
-            >
-              {petsAlive.toLocaleString()}
+        <div className="mx-auto max-w-6xl px-4 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {/* Network */}
+            <div className="flex flex-col gap-2">
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                // NETWORK
+              </span>
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-block w-2 h-2 animate-pulseGlow"
+                  style={{
+                    background: "var(--mort-green)",
+                    boxShadow: "0 0 8px var(--mort-green)",
+                  }}
+                />
+                <span
+                  className="font-display"
+                  style={{ fontSize: 13, color: "var(--mort-bone)" }}
+                >
+                  Base
+                </span>
+              </div>
+              <span
+                className="font-pixel"
+                style={{ fontSize: 15, color: "var(--mort-ash)" }}
+              >
+                Chain ID 8453 · Mainnet
+              </span>
             </div>
-            <div
-              className="font-display mt-2"
-              style={{ fontSize: 9, color: "var(--mort-ash)" }}
-            >
-              Pets Alive
+
+            {/* Contract */}
+            <div className="flex flex-col gap-2">
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                // CONTRACT
+              </span>
+              <div className="flex items-center gap-2">
+                <code
+                  className="font-display"
+                  style={{ fontSize: 11, color: "var(--mort-bone)" }}
+                >
+                  {contractConfigured ? shortAddress(CONTRACT_ADDRESS) : "0x000…000"}
+                </code>
+                {contractConfigured ? (
+                  <>
+                    <button
+                      onClick={() => handleCopy(CONTRACT_ADDRESS)}
+                      aria-label="Copy contract address"
+                      style={{ color: "var(--mort-ash)" }}
+                    >
+                      {copied ? (
+                        <Check size={14} color="var(--mort-green)" />
+                      ) : (
+                        <Copy size={14} />
+                      )}
+                    </button>
+                    <a
+                      href={basescanAddressUrl(CONTRACT_ADDRESS)}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="View on BaseScan"
+                      style={{ color: "var(--mort-orchid)" }}
+                    >
+                      <ExternalLink size={14} />
+                    </a>
+                  </>
+                ) : null}
+              </div>
+              <span
+                className="font-pixel"
+                style={{ fontSize: 15, color: "var(--mort-ash)" }}
+              >
+                {contractConfigured ? "ERC-721 · Verified" : "Reveals at Genesis drop"}
+              </span>
+            </div>
+
+            {/* Supply */}
+            <div className="flex flex-col gap-2">
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                // SUPPLY
+              </span>
+              <div
+                className="font-display"
+                style={{ fontSize: 13, color: "var(--mort-bone)" }}
+              >
+                0 / {TOTAL_SUPPLY.toLocaleString()}
+              </div>
+              <div
+                className="w-full"
+                style={{
+                  height: 8,
+                  background: "var(--mort-bg)",
+                  border: "1px solid var(--mort-line)",
+                }}
+              >
+                <div
+                  style={{
+                    width: "0%",
+                    height: "100%",
+                    background: "var(--mort-orange-deep)",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Mint price */}
+            <div className="flex flex-col gap-2">
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                // MINT PRICE
+              </span>
+              <div
+                className="font-display"
+                style={{ fontSize: 13, color: "var(--mort-bone)" }}
+              >
+                {MINT_PRICE_ETH} ETH
+              </div>
+              <span
+                className="font-pixel"
+                style={{ fontSize: 15, color: "var(--mort-ash)" }}
+              >
+                Max {MAX_PER_TX} / tx · Public
+              </span>
             </div>
           </div>
-          <div>
-            <div
-              className="font-display"
-              style={{ fontSize: 22, color: "var(--mort-orange-deep)" }}
-            >
-              {petsBurned.toLocaleString()}
+
+          {/* Trust badges */}
+          <div
+            className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 pt-6"
+            style={{ borderTop: "1px dashed var(--mort-line)" }}
+          >
+            <div className="flex items-center gap-2">
+              <Shield size={12} color="var(--mort-green)" />
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                Ownership renounced
+              </span>
             </div>
-            <div
-              className="font-display mt-2"
-              style={{ fontSize: 9, color: "var(--mort-ash)" }}
-            >
-              Pets Burned
+            <div className="flex items-center gap-2">
+              <Lock size={12} color="var(--mort-orchid)" />
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                100% on-chain logic
+              </span>
             </div>
-          </div>
-          <div>
-            <div className="font-display" style={{ fontSize: 22, color: "var(--mort-bone)" }}>
-              28d
+            <div className="flex items-center gap-2">
+              <Sparkles size={12} color="var(--mort-orange)" />
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                Provably fair reveal
+              </span>
             </div>
-            <div
-              className="font-display mt-2"
-              style={{ fontSize: 9, color: "var(--mort-ash)" }}
-            >
-              Max Hunger
-            </div>
-          </div>
-          <div>
-            <div className="font-display" style={{ fontSize: 22, color: "var(--mort-orchid)" }}>
-              4 × 5
-            </div>
-            <div
-              className="font-display mt-2"
-              style={{ fontSize: 9, color: "var(--mort-ash)" }}
-            >
-              Species × Elements
+            <div className="flex items-center gap-2">
+              <Flame size={12} color="var(--mort-orange-deep)" />
+              <span
+                className="font-display"
+                style={{ fontSize: 9, color: "var(--mort-ash)" }}
+              >
+                Deflationary supply
+              </span>
             </div>
           </div>
         </div>
@@ -696,16 +918,239 @@ function App() {
                 </li>
               </ul>
 
-              <div className="flex flex-wrap gap-3 items-center">
-                <a href="#how" className="pixel-btn">
-                  Open Hatch Order
-                </a>
-                <span
-                  className="font-display"
-                  style={{ fontSize: 10, color: "var(--mort-ash)" }}
-                >
-                  · 0.001 ETH · Base ·
-                </span>
+              {/* MINT WIDGET */}
+              <div
+                className="pixel-frame-orange p-5 mt-2"
+                style={{ background: "rgba(13, 6, 23, 0.7)" }}
+              >
+                {txHash ? (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <Check size={18} color="var(--mort-green)" />
+                      <span
+                        className="font-display"
+                        style={{ fontSize: 12, color: "var(--mort-green)" }}
+                      >
+                        Mint sent
+                      </span>
+                    </div>
+                    <p
+                      className="font-pixel leading-snug"
+                      style={{ fontSize: 17, color: "var(--mort-ash)" }}
+                    >
+                      Your hatch box{quantity > 1 ? "es are" : " is"} on the way. Waiting
+                      for confirmation on Base.
+                    </p>
+                    <a
+                      href={basescanTxUrl(txHash)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-2 font-display"
+                      style={{ fontSize: 10, color: "var(--mort-orchid)" }}
+                    >
+                      <span>{shortAddress(txHash)}</span>
+                      <ExternalLink size={12} />
+                      <span style={{ color: "var(--mort-ash)" }}>View on BaseScan</span>
+                    </a>
+                    <button
+                      onClick={() => {
+                        setTxHash(null);
+                        setTxError(null);
+                      }}
+                      className="pixel-btn pixel-btn-ghost mt-1"
+                      style={{ fontSize: 10, alignSelf: "flex-start" }}
+                    >
+                      Mint Again
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-4">
+                      <span
+                        className="font-display"
+                        style={{ fontSize: 10, color: "var(--mort-ash)" }}
+                      >
+                        // HATCH ORDER
+                      </span>
+                      <span
+                        className="font-display"
+                        style={{ fontSize: 10, color: "var(--mort-orange-deep)" }}
+                      >
+                        {MINT_PRICE_ETH} ETH / BOX
+                      </span>
+                    </div>
+
+                    {/* Quantity selector */}
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <span
+                        className="font-display"
+                        style={{ fontSize: 10, color: "var(--mort-bone)" }}
+                      >
+                        Quantity
+                      </span>
+                      <div
+                        className="flex items-center"
+                        style={{
+                          background: "var(--mort-bg)",
+                          border: "2px solid var(--mort-line)",
+                        }}
+                      >
+                        <button
+                          onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                          disabled={quantity <= 1 || txPending}
+                          aria-label="Decrease quantity"
+                          className="flex items-center justify-center"
+                          style={{
+                            width: 36,
+                            height: 36,
+                            color: "var(--mort-bone)",
+                            opacity: quantity <= 1 ? 0.4 : 1,
+                          }}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span
+                          className="font-display flex items-center justify-center"
+                          style={{
+                            width: 44,
+                            fontSize: 14,
+                            color: "var(--mort-bone)",
+                            borderLeft: "2px solid var(--mort-line)",
+                            borderRight: "2px solid var(--mort-line)",
+                            height: 36,
+                          }}
+                        >
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={() =>
+                            setQuantity((q) => Math.min(MAX_PER_TX, q + 1))
+                          }
+                          disabled={quantity >= MAX_PER_TX || txPending}
+                          aria-label="Increase quantity"
+                          className="flex items-center justify-center"
+                          style={{
+                            width: 36,
+                            height: 36,
+                            color: "var(--mort-bone)",
+                            opacity: quantity >= MAX_PER_TX ? 0.4 : 1,
+                          }}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Total */}
+                    <div
+                      className="flex items-center justify-between mb-5 pb-4"
+                      style={{ borderBottom: "1px dashed var(--mort-line)" }}
+                    >
+                      <span
+                        className="font-display"
+                        style={{ fontSize: 10, color: "var(--mort-ash)" }}
+                      >
+                        Total
+                      </span>
+                      <span
+                        className="font-display"
+                        style={{ fontSize: 14, color: "var(--mort-bone)" }}
+                      >
+                        {totalEth} ETH
+                      </span>
+                    </div>
+
+                    {/* Action button */}
+                    <button
+                      onClick={handleMint}
+                      disabled={txPending || wallet.connecting || wallet.switching}
+                      className="pixel-btn w-full flex items-center justify-center gap-2"
+                      style={{ fontSize: 11 }}
+                    >
+                      {txPending ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" />
+                          <span>Minting…</span>
+                        </>
+                      ) : !wallet.address ? (
+                        <>
+                          <Wallet size={14} />
+                          <span>
+                            {wallet.connecting ? "Connecting…" : "Connect Wallet to Mint"}
+                          </span>
+                        </>
+                      ) : !onBase ? (
+                        <>
+                          <AlertTriangle size={14} />
+                          <span>{wallet.switching ? "Switching…" : "Switch to Base"}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={14} />
+                          <span>Mint Now</span>
+                        </>
+                      )}
+                    </button>
+
+                    {/* Status / error line */}
+                    <div className="mt-3 min-h-[18px]">
+                      {wallet.error ? (
+                        <p
+                          className="font-pixel flex items-start gap-2"
+                          style={{ fontSize: 15, color: "var(--mort-orange-deep)" }}
+                        >
+                          <AlertTriangle
+                            size={12}
+                            color="var(--mort-orange-deep)"
+                            className="mt-1 shrink-0"
+                          />
+                          <span>{wallet.error}</span>
+                        </p>
+                      ) : txError ? (
+                        <p
+                          className="font-pixel flex items-start gap-2"
+                          style={{ fontSize: 15, color: "var(--mort-orange-deep)" }}
+                        >
+                          <AlertTriangle
+                            size={12}
+                            color="var(--mort-orange-deep)"
+                            className="mt-1 shrink-0"
+                          />
+                          <span>{txError}</span>
+                        </p>
+                      ) : !wallet.address ? (
+                        <p
+                          className="font-pixel"
+                          style={{ fontSize: 15, color: "var(--mort-ash)" }}
+                        >
+                          Connect a wallet to claim a sealed hatch box on Base.
+                        </p>
+                      ) : !onBase ? (
+                        <p
+                          className="font-pixel"
+                          style={{ fontSize: 15, color: "var(--mort-orange)" }}
+                        >
+                          Wrong network detected — switch to Base mainnet to mint.
+                        </p>
+                      ) : !contractConfigured ? (
+                        <p
+                          className="font-pixel"
+                          style={{ fontSize: 15, color: "var(--mort-orange)" }}
+                        >
+                          Genesis drop opens soon — mint goes live the moment the
+                          contract is announced.
+                        </p>
+                      ) : (
+                        <p
+                          className="font-pixel"
+                          style={{ fontSize: 15, color: "var(--mort-ash)" }}
+                        >
+                          You'll sign one transaction. Gas paid in ETH on Base.
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
