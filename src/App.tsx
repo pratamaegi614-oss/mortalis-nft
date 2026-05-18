@@ -268,7 +268,7 @@ const PHASES: Phase[] = [
 
 type Faq = {
   q: string;
-  a: string;
+  a: ReactNode;
   Icon: LucideIcon;
   color: string;
 };
@@ -276,19 +276,37 @@ type Faq = {
 const FAQ: Faq[] = [
   {
     q: "Why deflationary?",
-    a: "Because real scarcity beats a label that just says \"rare.\" Every surviving pet is proof its owner showed up.",
+    a: (
+      <>
+        Because real scarcity beats a label that just says “rare.” Every surviving
+        pet is proof its owner showed up.
+      </>
+    ),
     Icon: Bug,
     color: "var(--mort-orange-deep)",
   },
   {
     q: "Can it be revived?",
-    a: "No. Burned means burned. But in V2, a \"Phylactery\" item can lock in a 30-day protection before death lands.",
+    a: (
+      <>
+        No. Burned means burned. But in V2, a{" "}
+        <TermTip term="Phylactery — a V2 item that locks in a 30-day protection window. Equip it before death lands and your pet survives one full decay cycle.">
+          <span style={{ color: "var(--mort-bone)" }}>“Phylactery”</span>
+        </TermTip>{" "}
+        item can lock in a 30-day protection before death lands.
+      </>
+    ),
     Icon: Ghost,
     color: "var(--mort-orchid)",
   },
   {
     q: "Worried you'll forget?",
-    a: "Email reminders, Discord, and a Telegram bot are coming. But ultimately, attention is the price of admission — that's the whole point.",
+    a: (
+      <>
+        Email reminders, Discord, and a Telegram bot are coming. But ultimately,
+        attention is the price of admission — that's the whole point.
+      </>
+    ),
     Icon: Bell,
     color: "var(--mort-green)",
   },
@@ -812,8 +830,9 @@ function App() {
                         src={s.portrait}
                         alt={`${s.name} pixel art`}
                         className="pixel-img w-full h-full object-cover"
-                        loading="lazy"
+                        loading={idx < 2 ? "eager" : "lazy"}
                         decoding="async"
+                        fetchPriority={idx < 2 ? "high" : "auto"}
                       />
                     </div>
                     <span
@@ -1074,6 +1093,7 @@ function App() {
                     className="pixel-img w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
+                    fetchPriority="low"
                   />
                 </div>
                 <div>
@@ -1260,6 +1280,7 @@ function App() {
                   className="pixel-img w-56 h-56 md:w-64 md:h-64 animate-bobSlow"
                   loading="lazy"
                   decoding="async"
+                  fetchPriority="low"
                 />
                 <span
                   className="particle absolute top-2 left-2 w-2 h-2"
@@ -1527,29 +1548,52 @@ function App() {
                     {/* Status / error line */}
                     <div className="mt-3 min-h-[18px]">
                       {wallet.error ? (
-                        <p
-                          className="font-pixel flex items-start gap-2"
-                          style={{ fontSize: 15, color: "var(--mort-orange-deep)" }}
-                        >
+                        <div className="mint-status mint-status-error">
                           <AlertTriangle
                             size={12}
                             color="var(--mort-orange-deep)"
                             className="mt-1 shrink-0"
                           />
-                          <span>{wallet.error}</span>
-                        </p>
+                          <span className="font-pixel" style={{ fontSize: 15 }}>
+                            {wallet.error}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => wallet.connect()}
+                            className="mint-status-action"
+                          >
+                            Retry
+                          </button>
+                        </div>
                       ) : txError ? (
-                        <p
-                          className="font-pixel flex items-start gap-2"
-                          style={{ fontSize: 15, color: "var(--mort-orange-deep)" }}
-                        >
+                        <div className="mint-status mint-status-error">
                           <AlertTriangle
                             size={12}
                             color="var(--mort-orange-deep)"
                             className="mt-1 shrink-0"
                           />
-                          <span>{txError}</span>
-                        </p>
+                          <span className="font-pixel" style={{ fontSize: 15 }}>
+                            {txError}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTxError(null);
+                              handleMint();
+                            }}
+                            className="mint-status-action"
+                          >
+                            Retry mint
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setTxError(null)}
+                            className="mint-status-dismiss"
+                            aria-label="Dismiss error"
+                          >
+                            <X size={11} />
+                          </button>
+                        </div>
                       ) : !wallet.address ? (
                         <p
                           className="font-pixel"
@@ -1558,12 +1602,24 @@ function App() {
                           Connect a wallet to claim a sealed hatch box on Base.
                         </p>
                       ) : !onBase ? (
-                        <p
-                          className="font-pixel"
-                          style={{ fontSize: 15, color: "var(--mort-orange)" }}
-                        >
-                          Wrong network detected — switch to Base mainnet to mint.
-                        </p>
+                        <div className="mint-status mint-status-warn">
+                          <AlertTriangle
+                            size={12}
+                            color="var(--mort-orange)"
+                            className="mt-1 shrink-0"
+                          />
+                          <span className="font-pixel" style={{ fontSize: 15 }}>
+                            Wrong network detected.
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => wallet.switchToBase()}
+                            disabled={wallet.switching}
+                            className="mint-status-action"
+                          >
+                            {wallet.switching ? "Switching…" : "Switch to Base"}
+                          </button>
+                        </div>
                       ) : !contractConfigured ? (
                         <p
                           className="font-pixel"
