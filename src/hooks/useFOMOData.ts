@@ -53,7 +53,7 @@ export function useFOMOData(): FOMOData {
   const [totalMinted, setTotalMinted] = useState(2847); // Mock data
   const [recentMints, setRecentMints] = useState<MintActivity[]>([]);
   const [viewingCount, setViewingCount] = useState(847);
-  const [subscriberCount, setSubscriberCount] = useState(1247);
+  const subscriberCount = 1247; // Static mock value
 
   // Species breakdown - update these based on your contract
   const speciesBreakdown = [

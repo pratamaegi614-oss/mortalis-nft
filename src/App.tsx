@@ -56,7 +56,6 @@ import {
 } from "./lib/mint";
 import { CountdownTimer } from "./components/CountdownTimer";
 import { MintProgress } from "./components/MintProgress";
-import { LiveMintFeed } from "./components/LiveMintFeed";
 import { FOMOStats, MintVelocity } from "./components/FOMOStats";
 import { WaitlistForm } from "./components/WaitlistForm";
 import { useFOMOData, useWaitlist } from "./hooks/useFOMOData";
