@@ -26,7 +26,7 @@ import {
   Plus,
 } from "lucide-react";
 import "./App.css";
-import slimeImg from "./sprites/slime.png";
+import mortalisLogo from "./sprites/mortalis-logo.jpg";
 import hatchboxImg from "./sprites/hatchbox.png";
 import voidlingImg from "./sprites/characters/voidling.gif";
 import mosslingImg from "./sprites/characters/mossling.gif";
@@ -384,13 +384,14 @@ function App() {
         style={{ background: "var(--mort-bg)", borderBottom: "2px solid var(--mort-line)" }}
       >
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-3">
-            <img
-              src={slimeImg}
-              alt=""
-              className="pixel-img w-8 h-8 animate-bob"
-              aria-hidden
-            />
+          <a href="#top" className="flex items-center gap-3 group">
+            <span className="mortalis-logo-mark mortalis-logo-mark--sm">
+              <img
+                src={mortalisLogo}
+                alt="MORTALIS sigil"
+                className="pixel-img w-full h-full"
+              />
+            </span>
             <span
               className="font-display tracking-widest"
               style={{ fontSize: 13, color: "var(--mort-bone)" }}
@@ -1493,7 +1494,13 @@ function App() {
         <div className="mx-auto max-w-6xl px-4 py-10 flex flex-col gap-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <img src={slimeImg} alt="" className="pixel-img w-8 h-8 animate-bob" />
+              <span className="mortalis-logo-mark mortalis-logo-mark--sm">
+                <img
+                  src={mortalisLogo}
+                  alt="MORTALIS sigil"
+                  className="pixel-img w-full h-full"
+                />
+              </span>
               <div>
                 <p
                   className="font-display"
