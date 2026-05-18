@@ -67,8 +67,8 @@ const SPECIES: Species[] = [
     name: "Voidling",
     title: "Shadow of the Digital Void",
     affinity: "Void",
-    tagline: "Semakin dilupakan, ia menghilang.",
-    lore: "Makhluk bayangan dari kekosongan digital dengan glowing eyes, shadow cloak, glitch particles, dan void aura.",
+    tagline: "The more it is forgotten, the more it fades away.",
+    lore: "A shadow creature from the digital void with glowing eyes, a shadow cloak, glitch particles, and a void aura.",
     compatible: ["Horns", "Glitch marks", "Void aura", "Corrupted accessories"],
     incompatible: ["Flowers", "Vines", "Nature growth"],
     frameClass: "pixel-frame-purple",
@@ -82,8 +82,8 @@ const SPECIES: Species[] = [
     name: "Mossling",
     title: "Living Moss Guardian",
     affinity: "Earth",
-    tagline: "Jika tak dirawat, ia mengering menjadi kayu mati.",
-    lore: "Creature lumut hidup dengan round organic body, moss texture, forest details, flowers, roots, mushrooms, dan spores.",
+    tagline: "If left untended, it dries into dead wood.",
+    lore: "A living moss creature with a round organic body, moss texture, forest details, flowers, roots, mushrooms, and spores.",
     compatible: ["Mushroom", "Branches", "Flowers", "Roots", "Spores"],
     incompatible: ["Fire crown", "Lava cracks", "Heavy glitch"],
     frameClass: "pixel-frame-green",
@@ -97,8 +97,8 @@ const SPECIES: Species[] = [
     name: "Shardling",
     title: "Crystal Memory Fragment",
     affinity: "Arcane",
-    tagline: "Retak perlahan saat kesepian.",
-    lore: "Makhluk crystal yang terbentuk dari memory fragments dengan crystal spikes, arcane glow, mineral body, dan floating shards.",
+    tagline: "Cracks slowly when left in loneliness.",
+    lore: "A crystal creature formed from memory fragments with crystal spikes, an arcane glow, a mineral body, and floating shards.",
     compatible: ["Crystal growth", "Arcane marks", "Cracks", "Floating shards"],
     incompatible: ["Vines", "Flowers", "Smoke body"],
     frameClass: "pixel-frame-blue",
@@ -112,8 +112,8 @@ const SPECIES: Species[] = [
     name: "Wisp",
     title: "Burning Soul Spirit",
     affinity: "Fire / Soul",
-    tagline: "Padam jika tak diberi makanan.",
-    lore: "Spirit api kecil dengan ghost body, floating flame, ember particles, smoke halo, cursed candles, dan soul marks.",
+    tagline: "Extinguishes if it is not fed.",
+    lore: "A small fire spirit with a ghost body, floating flame, ember particles, a smoke halo, cursed candles, and soul marks.",
     compatible: ["Flame crown", "Smoke halo", "Cursed candles", "Soul marks"],
     incompatible: ["Mushrooms", "Bark skin", "Crystal spikes"],
     frameClass: "pixel-frame-orange",
@@ -758,9 +758,9 @@ function App() {
               className="font-pixel max-w-3xl leading-snug"
               style={{ fontSize: 20, color: "var(--mort-ash)" }}
             >
-              MORTALIS dibentuk dari kombinasi modular layer dan compatibility logic: species,
-              element overlay, eyes, head, body, accessory, aura, mutation, dan decay state.
-              Genesis supply fixed di {TOTAL_SUPPLY.toLocaleString()} NFT unik.
+              MORTALIS is built from a combination of modular layers and compatibility logic: species,
+              element overlay, eyes, head, body, accessory, aura, mutation, and decay state.
+              Genesis supply is fixed at {TOTAL_SUPPLY.toLocaleString()} unique NFTs.
             </p>
             <div className="pixel-rule mt-6 w-32" />
           </div>
@@ -899,8 +899,8 @@ function App() {
                 className="font-pixel leading-snug mb-4"
                 style={{ fontSize: 18, color: "var(--mort-ash)" }}
               >
-                Sebagian kecil NFT membuka trait pool tambahan. Mutation bersifat ultra rare
-                dan tetap mengikuti compatibility rules.
+                A small portion of NFTs unlock additional trait pools. Mutations are ultra rare
+                and still follow the compatibility rules.
               </p>
               <div className="flex flex-col gap-2">
                 {MUTATIONS.map((mutation) => (
