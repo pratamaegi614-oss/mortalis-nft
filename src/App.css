@@ -770,6 +770,74 @@ body {
   text-transform: uppercase;
 }
 
+/* Inline mint status (error / warn) with retry + dismiss */
+.mint-status {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  padding: 8px 10px;
+  border: 2px solid var(--mort-line);
+  background: rgba(13, 6, 23, 0.55);
+}
+.mint-status.mint-status-error {
+  border-color: var(--mort-orange-deep);
+  color: var(--mort-orange-deep);
+}
+.mint-status.mint-status-warn {
+  border-color: var(--mort-orange);
+  color: var(--mort-orange);
+}
+.mint-status > span {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--mort-bone);
+  word-break: break-word;
+}
+.mint-status-action {
+  font-family: "Press Start 2P", ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  background: var(--mort-bg);
+  color: var(--mort-bone);
+  border: 2px solid currentColor;
+  cursor: pointer;
+  transition:
+    transform 80ms ease-out,
+    background 120ms ease-out;
+}
+.mint-status-action:hover {
+  background: var(--mort-surface);
+}
+.mint-status-action:active {
+  transform: scale(0.96);
+}
+.mint-status-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mint-status-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--mort-line);
+  background: transparent;
+  color: var(--mort-ash);
+  cursor: pointer;
+  transition: color 120ms ease-out;
+}
+.mint-status-dismiss:hover {
+  color: var(--mort-bone);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mint-status-action {
+    transition: none;
+  }
+}
+
 /* Scroll progress bar (fixed top) */
 .scroll-progress {
   position: fixed;
