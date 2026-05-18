@@ -35,6 +35,7 @@ import {
   X,
 } from "lucide-react";
 import "./App.css";
+import "./components/fomo-components.css";
 import mortalisLogo from "./sprites/mortalis-logo.jpg";
 import hatchboxImg from "./sprites/hatchbox.png";
 import voidlingImg from "./sprites/characters/voidling.gif";
@@ -53,6 +54,12 @@ import {
   mint as sendMint,
   totalEthForQuantity,
 } from "./lib/mint";
+import { CountdownTimer } from "./components/CountdownTimer";
+import { MintProgress } from "./components/MintProgress";
+import { LiveMintFeed } from "./components/LiveMintFeed";
+import { FOMOStats, MintVelocity } from "./components/FOMOStats";
+import { WaitlistForm } from "./components/WaitlistForm";
+import { useFOMOData, useWaitlist } from "./hooks/useFOMOData";
 
 type Species = {
   key: string;
@@ -565,6 +572,10 @@ function App() {
   const activeSection = useActiveSection(SECTION_IDS);
   const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
 
+  // FOMO Data & Hooks
+  const fomoData = useFOMOData();
+  const { submitEmail } = useWaitlist();
+
   useEffect(() => {
     if (!copied) return;
     const t = setTimeout(() => setCopied(false), 1600);
@@ -760,6 +771,24 @@ function App() {
       >
         <HeroEmbers />
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 relative z-10">
+          {/* Countdown Timer - Top of Hero */}
+          {!fomoData.isLaunched && (
+            <div className="mb-8 flex justify-center">
+              <CountdownTimer targetDate={fomoData.launchDate} />
+            </div>
+          )}
+
+          {/* FOMO Stats - Live Activity */}
+          {fomoData.isLaunched && (
+            <div className="mb-6 flex justify-center">
+              <FOMOStats
+                viewingCount={fomoData.viewingCount}
+                mintingCount={fomoData.mintingCount}
+                recentMintsCount={fomoData.recentMintsCount}
+              />
+            </div>
+          )}
+
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div
@@ -805,7 +834,7 @@ function App() {
                 decides who lives.
               </p>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 mb-8">
                 <a href="#box" className="pixel-btn">
                   Hatch a Pet
                 </a>
@@ -813,6 +842,14 @@ function App() {
                   See Mechanics
                 </a>
               </div>
+
+              {/* Waitlist Form - Pre-launch only */}
+              {!fomoData.isLaunched && (
+                <WaitlistForm
+                  onSubmit={submitEmail}
+                  subscriberCount={fomoData.subscriberCount}
+                />
+              )}
             </div>
 
             <div className="relative">
@@ -872,6 +909,28 @@ function App() {
         }}
       >
         <div className="mx-auto max-w-6xl px-4 py-8">
+          {/* Mint Velocity Alert - Only when launched */}
+          {fomoData.isLaunched && fomoData.recentMintsCount > 0 && (
+            <div className="mb-6">
+              <MintVelocity
+                recentMintsCount={fomoData.recentMintsCount}
+                timeWindow="last hour"
+                remaining={fomoData.totalSupply - fomoData.totalMinted}
+              />
+            </div>
+          )}
+
+          {/* Enhanced Mint Progress - Only when launched */}
+          {fomoData.isLaunched && (
+            <div className="mb-8">
+              <MintProgress
+                totalMinted={fomoData.totalMinted}
+                totalSupply={fomoData.totalSupply}
+                speciesBreakdown={fomoData.speciesBreakdown}
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {/* Network */}
             <div className="flex flex-col gap-2">

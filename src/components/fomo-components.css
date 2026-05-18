@@ -1,0 +1,656 @@
+/* ============================================
+   FOMO COMPONENTS STYLES
+   ============================================ */
+
+/* Countdown Timer */
+.countdown-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 30, 0.9));
+  border: 2px solid var(--mort-orange);
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 107, 0, 0.5); }
+}
+
+.countdown-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  color: var(--mort-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.countdown-digits {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.countdown-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  color: var(--mort-bone);
+  text-shadow: 0 0 10px var(--mort-orange);
+  min-width: 3rem;
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--mort-orange-deep);
+  border-radius: 4px;
+}
+
+.countdown-unit-label {
+  font-family: 'VT323', monospace;
+  font-size: 0.7rem;
+  color: var(--mort-gray);
+  text-transform: uppercase;
+}
+
+.countdown-separator {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.5rem;
+  color: var(--mort-orange);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+.countdown-date {
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--mort-gray);
+  text-align: center;
+}
+
+.countdown-complete {
+  background: linear-gradient(135deg, rgba(0, 100, 0, 0.3), rgba(0, 150, 0, 0.4));
+  border-color: var(--mort-green);
+  animation: pulse-green 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.5); }
+}
+
+/* Mint Progress */
+.mint-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--mort-gray);
+  border-radius: 8px;
+}
+
+.mint-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.mint-progress-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.mint-progress-count {
+  font-size: 1.5rem;
+  color: var(--mort-bone);
+}
+
+.mint-progress-label {
+  font-size: 0.7rem;
+  color: var(--mort-gray);
+}
+
+.mint-progress-percentage {
+  font-size: 0.9rem;
+  color: var(--mort-orange);
+}
+
+.mint-progress-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 107, 0, 0.2);
+  border: 1px solid var(--mort-orange);
+  border-radius: 4px;
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--mort-orange);
+  animation: pulse-alert 1.5s ease-in-out infinite;
+}
+
+.mint-progress-alert.critical {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: #ff0000;
+  color: #ff6666;
+  animation: pulse-critical 1s ease-in-out infinite;
+}
+
+@keyframes pulse-alert {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes pulse-critical {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+.mint-progress-bar-container {
+  width: 100%;
+}
+
+.mint-progress-bar-bg {
+  width: 100%;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mint-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mort-orange-deep), var(--mort-orange));
+  transition: width 0.5s ease-out;
+  box-shadow: 0 0 10px var(--mort-orange);
+}
+
+.mint-progress-species {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.mint-progress-species-label {
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-gray);
+  text-transform: uppercase;
+}
+
+.mint-progress-species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.mint-progress-species-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.mint-progress-species-item:hover {
+  border-color: var(--mort-bone);
+  transform: translateY(-2px);
+}
+
+.mint-progress-species-item.sold-out {
+  opacity: 0.6;
+  border-color: #ff0000;
+}
+
+.mint-progress-species-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mint-progress-species-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: var(--mort-bone);
+}
+
+.mint-progress-sold-out-badge {
+  font-family: 'VT323', monospace;
+  font-size: 0.75rem;
+  color: #ff6666;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  animation: blink-slow 2s ease-in-out infinite;
+}
+
+@keyframes blink-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.mint-progress-species-bar-container {
+  width: 100%;
+}
+
+.mint-progress-species-bar-bg {
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mint-progress-species-bar-fill {
+  height: 100%;
+  transition: width 0.5s ease-out;
+}
+
+.mint-progress-species-stats {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: var(--mort-gray);
+}
+
+.mint-progress-species-percentage {
+  color: var(--mort-bone);
+}
+
+/* Live Mint Feed */
+.live-mint-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--mort-orange);
+  border-radius: 8px;
+  max-width: 400px;
+}
+
+.live-mint-feed-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: var(--mort-orange);
+  text-transform: uppercase;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--mort-gray);
+}
+
+.live-mint-feed-count {
+  margin-left: auto;
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-gray);
+}
+
+.live-mint-feed-empty {
+  padding: 1rem;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  color: var(--mort-gray);
+  font-size: 0.9rem;
+}
+
+.live-mint-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.live-mint-feed-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.live-mint-feed-item.new {
+  background: rgba(255, 107, 0, 0.2);
+  border-color: var(--mort-orange);
+  animation: highlight-new 2s ease-out;
+}
+
+@keyframes highlight-new {
+  0% { transform: translateX(-10px); opacity: 0; }
+  10% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+.live-mint-feed-item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+}
+
+.live-mint-feed-address {
+  color: var(--mort-bone);
+  font-weight: bold;
+}
+
+.live-mint-feed-action {
+  color: var(--mort-gray);
+}
+
+.live-mint-feed-quantity {
+  color: var(--mort-orange);
+  font-weight: bold;
+}
+
+.live-mint-feed-species {
+  color: var(--mort-orchid);
+  font-weight: bold;
+}
+
+.live-mint-feed-token {
+  color: var(--mort-gold);
+}
+
+.live-mint-feed-item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'VT323', monospace;
+  font-size: 0.75rem;
+  color: var(--mort-gray);
+}
+
+.live-mint-feed-link {
+  color: var(--mort-orange);
+  transition: color 0.2s ease;
+}
+
+.live-mint-feed-link:hover {
+  color: var(--mort-bone);
+}
+
+.live-mint-feed-footer {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--mort-gray);
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-gray);
+}
+
+/* FOMO Stats */
+.fomo-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--mort-gray);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.fomo-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'VT323', monospace;
+  color: var(--mort-gray);
+}
+
+.fomo-stat-item.highlight {
+  color: var(--mort-orange);
+}
+
+.fomo-stat-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  color: var(--mort-bone);
+}
+
+.fomo-stat-label {
+  font-size: 0.9rem;
+}
+
+/* Mint Velocity */
+.mint-velocity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid var(--mort-orange);
+  border-radius: 8px;
+}
+
+.mint-velocity.fast {
+  background: rgba(255, 0, 0, 0.15);
+  border-color: #ff6666;
+  animation: pulse-velocity 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-velocity {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.mint-velocity-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+}
+
+.mint-velocity-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: var(--mort-orange);
+  text-transform: uppercase;
+}
+
+.mint-velocity-value {
+  color: var(--mort-bone);
+}
+
+.mint-velocity-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: #ff6666;
+}
+
+/* Waitlist Form */
+.waitlist-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--mort-gray);
+  border-radius: 8px;
+  max-width: 500px;
+}
+
+.waitlist-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-bone);
+}
+
+.waitlist-count {
+  font-family: 'VT323', monospace;
+  font-size: 0.95rem;
+  color: var(--mort-gray);
+  text-align: center;
+}
+
+.waitlist-count-number {
+  color: var(--mort-orange);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.waitlist-form-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.waitlist-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+  color: var(--mort-bone);
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.waitlist-input:focus {
+  outline: none;
+  border-color: var(--mort-orange);
+}
+
+.waitlist-input::placeholder {
+  color: var(--mort-gray);
+}
+
+.waitlist-submit {
+  padding: 0.75rem 1.5rem;
+  background: var(--mort-orange);
+  border: none;
+  border-radius: 4px;
+  color: var(--mort-bg);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.waitlist-submit:hover:not(:disabled) {
+  background: var(--mort-orange-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+}
+
+.waitlist-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.waitlist-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff6666;
+  border-radius: 4px;
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: #ff6666;
+}
+
+.waitlist-privacy {
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-gray);
+  text-align: center;
+}
+
+.waitlist-success {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 150, 0, 0.2);
+  border: 1px solid var(--mort-green);
+  border-radius: 4px;
+}
+
+.waitlist-success-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.waitlist-success-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-green);
+}
+
+.waitlist-success-subtitle {
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--mort-gray);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .countdown-value {
+    font-size: 1.5rem;
+    min-width: 2.5rem;
+  }
+  
+  .countdown-unit-label {
+    font-size: 0.6rem;
+  }
+  
+  .mint-progress-species-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .fomo-stats {
+    gap: 1rem;
+  }
+  
+  .waitlist-form-input {
+    flex-direction: column;
+  }
+}
