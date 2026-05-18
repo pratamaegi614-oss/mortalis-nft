@@ -189,6 +189,19 @@ body {
   background-color: #07030d;
 }
 
+.character-portrait {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--mort-line);
+  background-color: #07030d;
+}
+
+.character-portrait > img {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+}
+
 .generative-board {
   display: block;
   border: 2px solid var(--mort-line);
