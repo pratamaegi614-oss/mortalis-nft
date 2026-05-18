@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Check, X, Loader2, AlertCircle } from "lucide-react";
 
 interface WhitelistMintBoxProps {
-  userAddress?: string;
+  userAddress?: `0x${string}` | null;
   isWhitelisted: boolean;
   hasClaimedWL: boolean;
   wlSupplyRemaining: number;

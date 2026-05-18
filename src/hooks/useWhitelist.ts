@@ -1,29 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
-import { keccak256 } from "viem";
 
 // Merkle Tree Helper Functions
-function hashAddress(address: string): string {
-  return keccak256(address as `0x${string}`);
-}
-
 function generateMerkleProof(
-  address: string,
-  whitelist: string[]
+  _address: string,
+  _whitelist: string[]
 ): string[] {
   // This is a simplified version - in production, use a proper merkle tree library
   // like @openzeppelin/merkle-tree or merkletreejs
   
   // For now, return empty array (will be replaced with real implementation)
   return [];
-}
-
-function verifyMerkleProof(
-  address: string,
-  proof: string[],
-  merkleRoot: string
-): boolean {
-  // Simplified verification - replace with real implementation
-  return proof.length > 0;
 }
 
 interface WhitelistData {
@@ -41,7 +27,7 @@ interface UseWhitelistOptions {
   contractAddress?: string;
   // Whitelist addresses - in production, load from backend/IPFS
   whitelist?: string[];
-  // Merkle root from contract
+  // Merkle root from contract - not used yet but will be needed
   merkleRoot?: string;
 }
 
@@ -49,7 +35,6 @@ export function useWhitelist({
   userAddress,
   contractAddress,
   whitelist = [],
-  merkleRoot,
 }: UseWhitelistOptions): WhitelistData {
   const [wlMinted, setWlMinted] = useState(0); // Mock - replace with contract read
   const [publicMinted, setPublicMinted] = useState(0); // Mock - replace with contract read
@@ -150,7 +135,7 @@ export const WhitelistUtils = {
    * Generate merkle root from whitelist addresses
    * Use this to generate the root that you'll set in your contract
    */
-  generateMerkleRoot(addresses: string[]): string {
+  generateMerkleRoot(_addresses: string[]): string {
     // TODO: Implement proper merkle tree generation
     // Use @openzeppelin/merkle-tree or merkletreejs
     
@@ -168,7 +153,7 @@ export const WhitelistUtils = {
   /**
    * Export whitelist with proofs for frontend
    */
-  exportWhitelistWithProofs(addresses: string[]): Record<string, string[]> {
+  exportWhitelistWithProofs(_addresses: string[]): Record<string, string[]> {
     // TODO: Generate proofs for each address
     // const tree = StandardMerkleTree.of(...);
     // const proofs: Record<string, string[]> = {};
