@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Flame,
-  Droplet,
-  Mountain,
-  Wind,
   Ghost,
   Bug,
   Bell,
@@ -127,21 +124,6 @@ const SPECIES: Species[] = [
   },
 ];
 
-type Element = {
-  name: string;
-  desc: string;
-  Icon: LucideIcon;
-  color: string;
-};
-
-const ELEMENTS: Element[] = [
-  { name: "Fire", desc: "Ember particles, lava cracks, orange/red glow.", Icon: Flame, color: "var(--mort-orange-deep)" },
-  { name: "Water", desc: "Bubbles, mist, and water drip overlays.", Icon: Droplet, color: "#6ca5d4" },
-  { name: "Earth", desc: "Roots, moss, spores, and vines.", Icon: Mountain, color: "var(--mort-green)" },
-  { name: "Air", desc: "Wind particles, floating cloth, light aura.", Icon: Wind, color: "#b7d7df" },
-  { name: "Void", desc: "Glitch pixels, shadow distortion, purple corruption.", Icon: Ghost, color: "var(--mort-orchid)" },
-];
-
 const TRAIT_LAYERS = [
   "Background",
   "Species Base",
@@ -181,25 +163,25 @@ const MECHANICS: Mechanic[] = [
   {
     num: "01",
     title: "MINT",
-    desc: "Mint NFT egg dan dapatkan pet dengan stats, species, element, layer traits, mutation chance, dan rarity yang dirandom sesuai rules.",
+    desc: "Mint a sealed egg to receive a pet with randomized stats, species, element, layered traits, mutation chance, and rarity rolled on-chain.",
     Icon: ShoppingBag,
   },
   {
     num: "02",
     title: "FEED",
-    desc: "Kirim ETH atau token untuk memberi makan pet-mu dan reset timer decay sebelum visualnya melemah.",
+    desc: "Send ETH or tokens to feed your pet and reset the decay timer before its visuals start to weaken.",
     Icon: Heart,
   },
   {
     num: "03",
     title: "DECAY",
-    desc: "Jika tidak diberi makan, pet masuk ke stage decay bertahap: HEALTHY → WEAK → DYING → SKELETAL.",
+    desc: "Skip a feed and your pet drifts through the stages: HEALTHY → WEAK → DYING → SKELETAL.",
     Icon: Hourglass,
   },
   {
     num: "04",
     title: "DEATH & BURN",
-    desc: "Setelah periode tanpa feed, pet bisa dieksekusi dan di-burn permanen. Supply berkurang dan tidak ada remint.",
+    desc: "After the grace period without a feed, the pet can be executed and burned permanently. Supply drops and there is no remint.",
     Icon: Skull,
   },
 ];
@@ -1283,40 +1265,6 @@ function App() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ELEMENT SYSTEM */}
-      <section style={{ background: "var(--mort-bg)" }}>
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <p
-            className="font-display mb-8"
-            style={{ fontSize: 11, color: "var(--mort-orchid)" }}
-          >
-            // ELEMENT SYSTEM · VISUAL MODIFIERS
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {ELEMENTS.map((e) => (
-              <div
-                key={e.name}
-                className="pixel-frame p-5 flex flex-col items-center text-center gap-2"
-              >
-                <e.Icon size={22} color={e.color} />
-                <h4
-                  className="font-display mt-1"
-                  style={{ fontSize: 12, color: "var(--mort-bone)" }}
-                >
-                  {e.name}
-                </h4>
-                <p
-                  className="font-pixel leading-snug"
-                  style={{ fontSize: 15, color: "var(--mort-ash)" }}
-                >
-                  {e.desc}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
