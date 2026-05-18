@@ -32,6 +32,10 @@ import "./App.css";
 import slimeImg from "./sprites/slime.png";
 import hatchboxImg from "./sprites/hatchbox.png";
 import generativeSystemImg from "./sprites/generative-trait-system.png";
+import voidlingImg from "./sprites/characters/voidling.gif";
+import mosslingImg from "./sprites/characters/mossling.gif";
+import shardlingImg from "./sprites/characters/shardling.gif";
+import wispImg from "./sprites/characters/wisp.gif";
 import { BASE_CHAIN_ID, shortAddress, useWallet } from "./lib/wallet";
 import {
   CONTRACT_ADDRESS,
@@ -58,7 +62,7 @@ type Species = {
   rarity: string;
   accent: string;
   glow: string;
-  portraitPosition: string;
+  portrait: string;
 };
 
 const SPECIES: Species[] = [
@@ -75,7 +79,7 @@ const SPECIES: Species[] = [
     rarity: "Genesis · 30%",
     accent: "var(--mort-orchid)",
     glow: "rgba(198, 109, 222, 0.35)",
-    portraitPosition: "0% 0%",
+    portrait: voidlingImg,
   },
   {
     key: "mossling",
@@ -90,7 +94,7 @@ const SPECIES: Species[] = [
     rarity: "Genesis · 30%",
     accent: "var(--mort-green)",
     glow: "rgba(90, 154, 71, 0.35)",
-    portraitPosition: "33% 0%",
+    portrait: mosslingImg,
   },
   {
     key: "shardling",
@@ -105,7 +109,7 @@ const SPECIES: Species[] = [
     rarity: "Genesis · 15%",
     accent: "#64d7f3",
     glow: "rgba(100, 215, 243, 0.3)",
-    portraitPosition: "66% 0%",
+    portrait: shardlingImg,
   },
   {
     key: "wisp",
@@ -120,7 +124,7 @@ const SPECIES: Species[] = [
     rarity: "Genesis · 25%",
     accent: "var(--mort-orange-deep)",
     glow: "rgba(217, 72, 59, 0.35)",
-    portraitPosition: "100% 0%",
+    portrait: wispImg,
   },
 ];
 
@@ -526,13 +530,18 @@ function App() {
                     style={{ transform: idx % 2 === 0 ? "translateY(0)" : "translateY(16px)" }}
                   >
                     <div
-                      className="generative-portrait w-full h-32"
+                      className="character-portrait w-full aspect-square"
                       style={{
-                        backgroundImage: `url(${generativeSystemImg})`,
-                        backgroundPosition: s.portraitPosition,
                         boxShadow: `inset 0 0 0 1px ${s.accent}, 0 0 24px ${s.glow}`,
                       }}
-                    />
+                    >
+                      <img
+                        src={s.portrait}
+                        alt={`${s.name} pixel art`}
+                        className="pixel-img w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
                     <span
                       className="font-display"
                       style={{ fontSize: 10, color: "var(--mort-bone)" }}
@@ -778,14 +787,18 @@ function App() {
             {SPECIES.map((s, idx) => (
               <article key={s.key} className={`${s.frameClass} p-6 flex flex-col gap-4`}>
                 <div
-                  className="generative-portrait h-56"
+                  className="character-portrait w-full aspect-square"
                   style={{
-                    backgroundImage: `url(${generativeSystemImg})`,
-                    backgroundPosition: s.portraitPosition,
                     boxShadow: `inset 0 0 0 2px ${s.accent}, 0 0 28px ${s.glow}`,
                   }}
-                  aria-label={`${s.name} reference art`}
-                />
+                >
+                  <img
+                    src={s.portrait}
+                    alt={`${s.name} pixel art`}
+                    className="pixel-img w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
                 <div>
                   <p
                     className="font-display"
