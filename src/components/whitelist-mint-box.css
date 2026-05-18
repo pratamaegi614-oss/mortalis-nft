@@ -1,5 +1,5 @@
 /* ============================================
-   WHITELIST MINT BOX STYLES
+   WHITELIST MINT BOX STYLES - PIXEL ART THEME
    ============================================ */
 
 .whitelist-mint-box {
@@ -7,35 +7,161 @@
   flex-direction: column;
   gap: 1.5rem;
   padding: 2rem;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 30, 0.9));
-  border: 2px solid var(--mort-gray);
-  border-radius: 8px;
+  background: 
+    linear-gradient(135deg, rgba(13, 6, 23, 0.95), rgba(20, 10, 30, 0.98)),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 107, 0, 0.03) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(255, 107, 0, 0.03) 3px
+    );
+  border: 3px solid transparent;
+  border-image: linear-gradient(
+    135deg,
+    var(--mort-orange-deep),
+    var(--mort-orchid),
+    var(--mort-orange)
+  ) 1;
+  position: relative;
   max-width: 500px;
   margin: 0 auto;
+  box-shadow: 
+    0 0 30px rgba(255, 107, 0, 0.3),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+  animation: box-glow 3s ease-in-out infinite;
 }
 
+/* Corner decorations */
+.whitelist-mint-box::before,
+.whitelist-mint-box::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--mort-orange);
+  box-shadow: 0 0 8px var(--mort-orange);
+}
+
+.whitelist-mint-box::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.whitelist-mint-box::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+@keyframes box-glow {
+  0%, 100% { 
+    box-shadow: 
+      0 0 30px rgba(255, 107, 0, 0.3),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+  }
+  50% { 
+    box-shadow: 
+      0 0 40px rgba(255, 107, 0, 0.5),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Whitelist Active State */
 .whitelist-mint-box.wl-active {
-  border-color: var(--mort-green);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  border-image: linear-gradient(
+    135deg,
+    var(--mort-green),
+    #00ff00,
+    var(--mort-green)
+  ) 1;
+  box-shadow: 
+    0 0 40px rgba(0, 255, 0, 0.4),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+  animation: box-glow-green 2s ease-in-out infinite;
 }
 
+.whitelist-mint-box.wl-active::before,
+.whitelist-mint-box.wl-active::after {
+  border-color: var(--mort-green);
+  box-shadow: 0 0 12px var(--mort-green);
+}
+
+@keyframes box-glow-green {
+  0%, 100% { 
+    box-shadow: 
+      0 0 40px rgba(0, 255, 0, 0.4),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+  }
+  50% { 
+    box-shadow: 
+      0 0 50px rgba(0, 255, 0, 0.6),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* WL Claimed State */
 .whitelist-mint-box.wl-claimed {
+  border-image: linear-gradient(
+    135deg,
+    var(--mort-orchid),
+    #c66dde,
+    var(--mort-orchid)
+  ) 1;
+}
+
+.whitelist-mint-box.wl-claimed::before,
+.whitelist-mint-box.wl-claimed::after {
   border-color: var(--mort-orchid);
+  box-shadow: 0 0 10px var(--mort-orchid);
 }
 
+/* Public Only State */
 .whitelist-mint-box.public-only {
-  border-color: var(--mort-orange);
+  border-image: linear-gradient(
+    135deg,
+    var(--mort-orange-deep),
+    var(--mort-orange),
+    var(--mort-gold)
+  ) 1;
 }
 
+/* Success State */
 .whitelist-mint-box.success {
-  border-color: var(--mort-green);
-  background: linear-gradient(135deg, rgba(0, 100, 0, 0.3), rgba(0, 150, 0, 0.4));
+  border-image: linear-gradient(
+    135deg,
+    var(--mort-green),
+    #00ff00,
+    var(--mort-green)
+  ) 1;
+  background: 
+    linear-gradient(135deg, rgba(0, 100, 0, 0.4), rgba(0, 150, 0, 0.5)),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 0, 0.05) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(0, 255, 0, 0.05) 3px
+    );
   animation: pulse-success 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse-success {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.5); }
+  0%, 100% { 
+    box-shadow: 
+      0 0 40px rgba(0, 255, 0, 0.5),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 50px rgba(0, 255, 0, 0.7),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+    transform: scale(1.01);
+  }
 }
 
 /* Header */
@@ -43,7 +169,25 @@
   display: flex;
   justify-content: center;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--mort-gray);
+  border-bottom: 2px dashed var(--mort-gray);
+  position: relative;
+}
+
+.whitelist-mint-box-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mort-orange),
+    transparent
+  );
+  box-shadow: 0 0 8px var(--mort-orange);
 }
 
 .whitelist-mint-box-badge {
@@ -51,35 +195,57 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 0;
   font-family: 'Press Start 2P', monospace;
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  position: relative;
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+  );
 }
 
 .whitelist-mint-box-badge.wl {
-  background: rgba(0, 255, 0, 0.2);
-  border: 1px solid var(--mort-green);
+  background: 
+    linear-gradient(135deg, rgba(0, 255, 0, 0.3), rgba(0, 200, 0, 0.4)),
+    rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--mort-green);
   color: var(--mort-green);
+  text-shadow: 0 0 8px var(--mort-green);
   animation: pulse-wl-badge 2s ease-in-out infinite;
 }
 
 @keyframes pulse-wl-badge {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%, 100% { 
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+  }
+  50% { 
+    opacity: 0.85;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+  }
 }
 
 .whitelist-mint-box-badge.claimed {
-  background: rgba(198, 109, 222, 0.2);
-  border: 1px solid var(--mort-orchid);
+  background: 
+    linear-gradient(135deg, rgba(198, 109, 222, 0.3), rgba(150, 80, 180, 0.4)),
+    rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--mort-orchid);
   color: var(--mort-orchid);
+  text-shadow: 0 0 8px var(--mort-orchid);
 }
 
 .whitelist-mint-box-badge.not-wl {
-  background: rgba(255, 107, 0, 0.2);
-  border: 1px solid var(--mort-orange);
+  background: 
+    linear-gradient(135deg, rgba(255, 107, 0, 0.3), rgba(200, 80, 0, 0.4)),
+    rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--mort-orange);
   color: var(--mort-orange);
+  text-shadow: 0 0 8px var(--mort-orange);
 }
 
 /* Content */
@@ -93,6 +259,7 @@
 
 .whitelist-mint-box-icon {
   color: var(--mort-green);
+  filter: drop-shadow(0 0 8px var(--mort-green));
 }
 
 .whitelist-mint-box-title {
@@ -100,6 +267,9 @@
   font-size: 1rem;
   color: var(--mort-bone);
   line-height: 1.4;
+  text-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.8),
+    0 0 10px var(--mort-orange);
 }
 
 .whitelist-mint-box-subtitle {
@@ -116,22 +286,54 @@
   align-items: center;
   gap: 0.25rem;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--mort-gray);
-  border-radius: 4px;
+  background: 
+    linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(10, 5, 15, 0.8)),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 107, 0, 0.05) 10px,
+      rgba(255, 107, 0, 0.05) 20px
+    );
+  border: 2px solid var(--mort-gray);
+  border-radius: 0;
   width: 100%;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .price-value {
   font-family: 'Press Start 2P', monospace;
   font-size: 1.5rem;
   color: var(--mort-bone);
-  text-shadow: 0 0 10px var(--mort-orange);
+  text-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.8),
+    0 0 15px var(--mort-orange),
+    0 0 30px var(--mort-orange);
+  animation: price-glow 2s ease-in-out infinite;
+}
+
+@keyframes price-glow {
+  0%, 100% { 
+    text-shadow: 
+      2px 2px 0 rgba(0, 0, 0, 0.8),
+      0 0 15px var(--mort-orange),
+      0 0 30px var(--mort-orange);
+  }
+  50% { 
+    text-shadow: 
+      2px 2px 0 rgba(0, 0, 0, 0.8),
+      0 0 20px var(--mort-orange),
+      0 0 40px var(--mort-orange);
+  }
 }
 
 .whitelist-mint-box.wl-active .price-value {
   color: var(--mort-green);
-  text-shadow: 0 0 10px var(--mort-green);
+  text-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.8),
+    0 0 15px var(--mort-green),
+    0 0 30px var(--mort-green);
 }
 
 .price-label {
@@ -147,9 +349,26 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1.5rem;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--mort-gray);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--mort-gray);
+  position: relative;
+}
+
+.whitelist-mint-box-quantity::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 107, 0, 0.05) 2px,
+    rgba(255, 107, 0, 0.05) 4px
+  );
+  pointer-events: none;
 }
 
 .whitelist-mint-box-quantity button {
@@ -159,19 +378,32 @@
   align-items: center;
   justify-content: center;
   background: var(--mort-surface);
-  border: 1px solid var(--mort-gray);
-  border-radius: 4px;
+  border: 2px solid var(--mort-gray);
   color: var(--mort-bone);
   font-family: 'Press Start 2P', monospace;
   font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .whitelist-mint-box-quantity button:hover:not(:disabled) {
   background: var(--mort-orange);
   border-color: var(--mort-orange);
   transform: translateY(-2px);
+  box-shadow: 
+    2px 4px 0 rgba(0, 0, 0, 0.5),
+    0 0 15px var(--mort-orange);
+}
+
+.whitelist-mint-box-quantity button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    1px 1px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .whitelist-mint-box-quantity button:disabled {
@@ -185,6 +417,7 @@
   color: var(--mort-bone);
   min-width: 3rem;
   text-align: center;
+  text-shadow: 0 0 10px var(--mort-orange);
 }
 
 /* Total */
@@ -193,9 +426,9 @@
   font-size: 1.1rem;
   color: var(--mort-bone);
   padding: 0.5rem 1rem;
-  background: rgba(255, 107, 0, 0.1);
-  border: 1px solid var(--mort-orange);
-  border-radius: 4px;
+  background: rgba(255, 107, 0, 0.15);
+  border: 2px solid var(--mort-orange);
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
 }
 
 /* Supply Display */
@@ -205,9 +438,9 @@
   gap: 0.5rem;
   width: 100%;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--mort-gray);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--mort-gray);
+  position: relative;
 }
 
 .supply-label {
@@ -221,30 +454,50 @@
   font-family: 'Press Start 2P', monospace;
   font-size: 0.9rem;
   color: var(--mort-bone);
+  text-shadow: 0 0 8px var(--mort-orange);
 }
 
 .supply-bar {
   width: 100%;
   height: 12px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.supply-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 4px,
+    rgba(255, 255, 255, 0.05) 4px,
+    rgba(255, 255, 255, 0.05) 8px
+  );
+  pointer-events: none;
 }
 
 .supply-bar-fill {
   height: 100%;
   transition: width 0.5s ease-out;
+  position: relative;
 }
 
 .supply-bar-fill.wl {
   background: linear-gradient(90deg, var(--mort-green), #00ff00);
-  box-shadow: 0 0 10px var(--mort-green);
+  box-shadow: 0 0 15px var(--mort-green);
 }
 
 .supply-bar-fill.public {
   background: linear-gradient(90deg, var(--mort-orange-deep), var(--mort-orange));
-  box-shadow: 0 0 10px var(--mort-orange);
+  box-shadow: 0 0 15px var(--mort-orange);
 }
 
 /* Mint Button */
@@ -252,40 +505,74 @@
   width: 100%;
   padding: 1rem 2rem;
   background: var(--mort-orange);
-  border: none;
-  border-radius: 4px;
+  border: 3px solid var(--mort-orange-deep);
   color: var(--mort-bg);
   font-family: 'Press Start 2P', monospace;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  position: relative;
+  box-shadow: 
+    4px 4px 0 rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 107, 0, 0.4);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.whitelist-mint-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
 }
 
 .whitelist-mint-button.wl {
   background: var(--mort-green);
-  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
+  border-color: #00aa00;
+  box-shadow: 
+    4px 4px 0 rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(0, 255, 0, 0.5);
 }
 
 .whitelist-mint-button.wl:hover:not(:disabled) {
   background: #00ff00;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 255, 0, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 
+    4px 7px 0 rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(0, 255, 0, 0.6);
 }
 
 .whitelist-mint-button.public {
   background: var(--mort-orange);
-  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+  border-color: var(--mort-orange-deep);
 }
 
 .whitelist-mint-button.public:hover:not(:disabled) {
-  background: var(--mort-orange-deep);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 107, 0, 0.4);
+  background: var(--mort-gold);
+  transform: translateY(-3px);
+  box-shadow: 
+    4px 7px 0 rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 107, 0, 0.6);
+}
+
+.whitelist-mint-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.5),
+    0 0 15px rgba(255, 107, 0, 0.3);
 }
 
 .whitelist-mint-button:disabled {
@@ -300,13 +587,13 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid #ff6666;
-  border-radius: 4px;
+  background: rgba(255, 0, 0, 0.15);
+  border: 2px solid #ff6666;
   font-family: 'VT323', monospace;
   font-size: 0.9rem;
   color: #ff6666;
   width: 100%;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
 }
 
 .whitelist-mint-box-info {
@@ -314,14 +601,14 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: rgba(255, 107, 0, 0.1);
-  border: 1px solid var(--mort-orange);
-  border-radius: 4px;
+  background: rgba(255, 107, 0, 0.15);
+  border: 2px solid var(--mort-orange);
   font-family: 'VT323', monospace;
   font-size: 0.85rem;
   color: var(--mort-orange);
   width: 100%;
   text-align: left;
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
 }
 
 .whitelist-mint-box-note {
@@ -334,13 +621,61 @@
 /* Divider */
 .whitelist-mint-box-divider {
   width: 100%;
-  height: 1px;
-  background: var(--mort-gray);
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mort-gray),
+    transparent
+  );
   margin: 0.5rem 0;
+  position: relative;
+}
+
+.whitelist-mint-box-divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--mort-orange);
+  box-shadow: 0 0 8px var(--mort-orange);
+}
+
+/* Success State */
+.whitelist-success {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 150, 0, 0.25);
+  border: 2px solid var(--mort-green);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+.whitelist-success-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.whitelist-success-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  color: var(--mort-green);
+  text-shadow: 0 0 10px var(--mort-green);
+}
+
+.whitelist-success-subtitle {
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--mort-gray);
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .whitelist-mint-box {
     padding: 1.5rem;
   }
