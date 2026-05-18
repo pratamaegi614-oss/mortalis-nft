@@ -363,38 +363,11 @@ body {
 
 .mortalis-logo-mark {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--mort-orchid);
-  background:
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(198, 109, 222, 0.25) 0%,
-      rgba(13, 6, 23, 0.95) 70%
-    );
-  box-shadow:
-    inset 0 0 0 1px #050208,
-    0 0 0 2px #050208;
+  display: inline-block;
   overflow: hidden;
-  animation:
-    logoBreath 4.2s ease-in-out infinite,
-    logoPulse 2.8s ease-in-out infinite;
-}
-.mortalis-logo-mark::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.06) 0,
-    rgba(255, 255, 255, 0.06) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  mix-blend-mode: overlay;
-  animation: logoFlicker 3.6s steps(8, end) infinite;
+  border-radius: 50%;
+  background: #050208;
+  isolation: isolate;
 }
 .mortalis-logo-mark--sm {
   width: 40px;
@@ -402,48 +375,47 @@ body {
 }
 .mortalis-logo-mark > img {
   display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  filter: contrast(1.05) saturate(1.15) brightness(1.02);
+  animation: logoLetterPulse 2.8s ease-in-out infinite;
+  transform-origin: center;
+}
+.mortalis-logo-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 52%,
+    rgba(216, 132, 240, 0.85) 0%,
+    rgba(170, 80, 210, 0.45) 22%,
+    rgba(170, 80, 210, 0) 48%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.35;
+  animation: logoLetterGlow 2.8s ease-in-out infinite;
 }
 
-@keyframes logoBreath {
+@keyframes logoLetterPulse {
   0%,
   100% {
+    filter: contrast(1.05) saturate(1.15) brightness(1);
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    filter: contrast(1.2) saturate(1.55) brightness(1.35);
+    transform: scale(1.03);
   }
 }
-@keyframes logoPulse {
+@keyframes logoLetterGlow {
   0%,
   100% {
-    box-shadow:
-      inset 0 0 0 1px #050208,
-      0 0 0 2px #050208,
-      0 0 8px rgba(198, 109, 222, 0.35),
-      0 0 14px rgba(198, 109, 222, 0.2);
+    opacity: 0.25;
   }
   50% {
-    box-shadow:
-      inset 0 0 0 1px #050208,
-      0 0 0 2px #050208,
-      0 0 14px rgba(198, 109, 222, 0.75),
-      0 0 28px rgba(198, 109, 222, 0.45);
-  }
-}
-@keyframes logoFlicker {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  47% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 0.15;
-  }
-  53% {
-    opacity: 0.55;
+    opacity: 0.85;
   }
 }
 
