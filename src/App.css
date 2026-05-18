@@ -769,3 +769,149 @@ body {
   color: var(--mort-ash);
   text-transform: uppercase;
 }
+
+/* Scroll progress bar (fixed top) */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  z-index: 80;
+  pointer-events: none;
+}
+.scroll-progress::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: var(--scroll-progress, 0%);
+  background: linear-gradient(
+    90deg,
+    var(--mort-orange-deep) 0%,
+    var(--mort-orange) 50%,
+    var(--mort-orchid) 100%
+  );
+  box-shadow: 0 0 8px rgba(217, 72, 59, 0.55);
+  transition: width 80ms linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress::after {
+    transition: none;
+  }
+}
+
+/* Hero ember/glitch ambient particles (CSS only) */
+.hero-embers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.ember {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  image-rendering: pixelated;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: emberRise linear infinite;
+}
+.ember-sm {
+  width: 2px;
+  height: 2px;
+}
+.ember-lg {
+  width: 4px;
+  height: 4px;
+}
+@keyframes emberRise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  10% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.55;
+    transform: translate3d(6px, -180px, 0);
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-4px, -360px, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ember {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Inline tooltip on technical terms */
+.term-tip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted currentColor;
+  cursor: help;
+}
+.term-tip > .term-tip-bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  min-width: 220px;
+  max-width: 260px;
+  padding: 10px 12px;
+  background: var(--mort-bg);
+  color: var(--mort-bone);
+  border: 2px solid var(--mort-orchid);
+  box-shadow:
+    0 0 0 2px #050208,
+    0 4px 0 0 #050208;
+  font-family: "VT323", ui-monospace, monospace;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 140ms ease-out,
+    transform 140ms ease-out;
+  z-index: 70;
+}
+.term-tip > .term-tip-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--mort-orchid);
+}
+.term-tip:hover > .term-tip-bubble,
+.term-tip:focus-visible > .term-tip-bubble,
+.term-tip:focus-within > .term-tip-bubble {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.term-tip:focus-visible {
+  outline: 2px solid var(--mort-orchid);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .term-tip > .term-tip-bubble {
+    transition: none;
+  }
+}

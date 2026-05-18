@@ -363,6 +363,99 @@ function useActiveSection(ids: string[]) {
   return active;
 }
 
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY || doc.scrollTop;
+      const max = doc.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.min(100, Math.max(0, (scrollTop / max) * 100)) : 0;
+      setProgress(pct);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+  return progress;
+}
+
+function ScrollProgress() {
+  const progress = useScrollProgress();
+  return (
+    <div
+      className="scroll-progress"
+      aria-hidden="true"
+      style={{ ["--scroll-progress" as string]: `${progress}%` }}
+    />
+  );
+}
+
+function HeroEmbers() {
+  const embers = useMemo(() => {
+    const palette = [
+      "var(--mort-orange)",
+      "var(--mort-orange-deep)",
+      "var(--mort-orchid)",
+      "var(--mort-gold)",
+      "var(--mort-bone)",
+    ];
+    const sizes = ["ember-sm", "ember", "ember-lg"];
+    return Array.from({ length: 18 }, (_, i) => {
+      const seed = i * 37;
+      return {
+        left: `${(seed * 13) % 100}%`,
+        bottom: `${-((seed * 7) % 25)}%`,
+        duration: 7 + ((seed * 11) % 9),
+        delay: -((seed * 5) % 11),
+        color: palette[i % palette.length],
+        size: sizes[i % sizes.length],
+      };
+    });
+  }, []);
+  return (
+    <div className="hero-embers" aria-hidden="true">
+      {embers.map((e, i) => (
+        <span
+          key={i}
+          className={e.size}
+          style={{
+            left: e.left,
+            bottom: e.bottom,
+            background: e.color,
+            boxShadow: `0 0 6px ${e.color}`,
+            animationDuration: `${e.duration}s`,
+            animationDelay: `${e.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function TermTip({
+  term,
+  children,
+  style,
+}: {
+  term: string;
+  children: ReactNode;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <span className="term-tip" tabIndex={0} style={style}>
+      {children}
+      <span className="term-tip-bubble" role="tooltip">
+        {term}
+      </span>
+    </span>
+  );
+}
+
 function Reveal({
   children,
   className,
@@ -503,6 +596,8 @@ function App() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--mort-bg)", color: "var(--mort-bone)" }}>
+      <ScrollProgress />
+
       {/* Top scrolling tape */}
       <Tape />
 
@@ -642,6 +737,7 @@ function App() {
         className="relative bg-pixel-grid scanlines overflow-hidden"
         style={{ borderBottom: "2px solid var(--mort-line)" }}
       >
+        <HeroEmbers />
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -679,7 +775,12 @@ function App() {
                 A collection of pixel-art pets that vanish{" "}
                 <span style={{ color: "var(--mort-orange)" }}>permanently</span>{" "}
                 from the blockchain if you forget to feed them. No servers. No admins. Only{" "}
-                <span style={{ color: "var(--mort-bone)" }}>block.timestamp</span>{" "}
+                <TermTip
+                  term="Solidity's block timestamp — the UNIX time of the current block, set by the Base sequencer. No off-chain server controls it."
+                  style={{ color: "var(--mort-bone)" }}
+                >
+                  block.timestamp
+                </TermTip>{" "}
                 decides who lives.
               </p>
 
@@ -1215,8 +1316,14 @@ function App() {
                   <Shield size={16} color="var(--mort-orchid)" className="mt-1 shrink-0" />
                   <span style={{ color: "var(--mort-bone)" }}>
                     Provably fair:{" "}
-                    <code style={{ color: "var(--mort-orange)" }}>block.prevrandao</code> +
-                    tokenId. No admin can rewrite the outcome.
+                    <TermTip term="Post-merge randomness from the beacon chain, exposed to contracts as block.prevrandao. Cannot be predicted or rewritten by anyone after the block is sealed.">
+                      <code style={{ color: "var(--mort-orange)" }}>block.prevrandao</code>
+                    </TermTip>{" "}
+                    +{" "}
+                    <TermTip term="The unique on-chain ID assigned to each NFT at mint. Mixed with block.prevrandao to derive your hatch box outcome.">
+                      <code style={{ color: "var(--mort-orange)" }}>tokenId</code>
+                    </TermTip>
+                    . No admin can rewrite the outcome.
                   </span>
                 </li>
                 <li className="flex items-start gap-3 font-pixel" style={{ fontSize: 18 }}>
