@@ -5,6 +5,9 @@ export const BASE_CHAIN_HEX = "0x2105";
 
 type Eip1193Provider = {
   isMetaMask?: boolean;
+  isCoinbaseWallet?: boolean;
+  isRabby?: boolean;
+  isTrust?: boolean;
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
   on: (event: string, handler: (...args: unknown[]) => void) => void;
   removeListener: (event: string, handler: (...args: unknown[]) => void) => void;
@@ -13,6 +16,10 @@ type Eip1193Provider = {
 declare global {
   interface Window {
     ethereum?: Eip1193Provider;
+    okxwallet?: Eip1193Provider;
+    coinbaseWalletExtension?: Eip1193Provider;
+    trustwallet?: Eip1193Provider;
+    rabby?: Eip1193Provider;
   }
 }
 
@@ -22,11 +29,70 @@ export type WalletState = {
   connecting: boolean;
   switching: boolean;
   error: string | null;
+  availableWallets: string[];
 };
 
 export function shortAddress(addr: string | null | undefined): string {
   if (!addr) return "";
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+// Detect all available wallets
+function detectWallets(): { name: string; provider: Eip1193Provider }[] {
+  const wallets: { name: string; provider: Eip1193Provider }[] = [];
+
+  // MetaMask
+  if (window.ethereum?.isMetaMask) {
+    wallets.push({ name: "MetaMask", provider: window.ethereum });
+  }
+
+  // OKX Wallet
+  if (window.okxwallet) {
+    wallets.push({ name: "OKX Wallet", provider: window.okxwallet });
+  }
+
+  // Coinbase Wallet
+  if (window.coinbaseWalletExtension) {
+    wallets.push({ name: "Coinbase Wallet", provider: window.coinbaseWalletExtension });
+  } else if (window.ethereum?.isCoinbaseWallet) {
+    wallets.push({ name: "Coinbase Wallet", provider: window.ethereum });
+  }
+
+  // Trust Wallet
+  if (window.trustwallet) {
+    wallets.push({ name: "Trust Wallet", provider: window.trustwallet });
+  } else if (window.ethereum?.isTrust) {
+    wallets.push({ name: "Trust Wallet", provider: window.ethereum });
+  }
+
+  // Rabby Wallet
+  if (window.rabby) {
+    wallets.push({ name: "Rabby", provider: window.rabby });
+  } else if (window.ethereum?.isRabby) {
+    wallets.push({ name: "Rabby", provider: window.ethereum });
+  }
+
+  // Fallback: Generic window.ethereum (for other wallets)
+  if (window.ethereum && wallets.length === 0) {
+    wallets.push({ name: "Browser Wallet", provider: window.ethereum });
+  }
+
+  return wallets;
+}
+
+// Get preferred provider (priority order)
+function getPreferredProvider(): Eip1193Provider | null {
+  // Priority: OKX > MetaMask > Rabby > Coinbase > Trust > Generic
+  if (window.okxwallet) return window.okxwallet;
+  if (window.ethereum?.isMetaMask) return window.ethereum;
+  if (window.rabby) return window.rabby;
+  if (window.ethereum?.isRabby) return window.ethereum;
+  if (window.coinbaseWalletExtension) return window.coinbaseWalletExtension;
+  if (window.ethereum?.isCoinbaseWallet) return window.ethereum;
+  if (window.trustwallet) return window.trustwallet;
+  if (window.ethereum?.isTrust) return window.ethereum;
+  if (window.ethereum) return window.ethereum;
+  return null;
 }
 
 export function useWallet() {
@@ -36,10 +102,18 @@ export function useWallet() {
     connecting: false,
     switching: false,
     error: null,
+    availableWallets: [],
   });
 
   useEffect(() => {
-    const eth = window.ethereum;
+    // Detect available wallets
+    const wallets = detectWallets();
+    setState((s) => ({
+      ...s,
+      availableWallets: wallets.map((w) => w.name),
+    }));
+
+    const eth = getPreferredProvider();
     if (!eth) return;
 
     let cancelled = false;
@@ -84,29 +158,36 @@ export function useWallet() {
   }, []);
 
   const connect = useCallback(async () => {
-    if (!window.ethereum) {
-      setState((s) => ({
-        ...s,
-        error:
-          "No wallet detected. Install MetaMask or another EIP-1193 wallet to continue.",
-      }));
-      return;
+    const eth = getPreferredProvider();
+    
+    if (!eth) {
+      const wallets = detectWallets();
+      if (wallets.length === 0) {
+        setState((s) => ({
+          ...s,
+          error:
+            "No wallet detected. Please install MetaMask, OKX Wallet, Rabby, Trust Wallet, or Coinbase Wallet.",
+        }));
+        return;
+      }
     }
+
     setState((s) => ({ ...s, connecting: true, error: null }));
     try {
-      const accs = (await window.ethereum.request({
+      const accs = (await eth!.request({
         method: "eth_requestAccounts",
       })) as string[];
-      const cid = (await window.ethereum.request({
+      const cid = (await eth!.request({
         method: "eth_chainId",
       })) as string;
-      setState({
+      setState((s) => ({
+        ...s,
         address: (accs[0] as `0x${string}`) ?? null,
         chainId: parseInt(cid, 16),
         connecting: false,
         switching: false,
         error: null,
-      });
+      }));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Connect failed";
       setState((s) => ({ ...s, connecting: false, error: msg }));
@@ -114,10 +195,12 @@ export function useWallet() {
   }, []);
 
   const switchToBase = useCallback(async () => {
-    if (!window.ethereum) return;
+    const eth = getPreferredProvider();
+    if (!eth) return;
+    
     setState((s) => ({ ...s, switching: true, error: null }));
     try {
-      await window.ethereum.request({
+      await eth.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: BASE_CHAIN_HEX }],
       });
@@ -125,7 +208,7 @@ export function useWallet() {
       const err = e as { code?: number };
       if (err.code === 4902 || err.code === -32603) {
         try {
-          await window.ethereum.request({
+          await eth.request({
             method: "wallet_addEthereumChain",
             params: [
               {
