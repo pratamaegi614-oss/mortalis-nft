@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   Flame,
@@ -24,6 +31,8 @@ import {
   AlertTriangle,
   Minus,
   Plus,
+  Menu,
+  X,
 } from "lucide-react";
 import "./App.css";
 import mortalisLogo from "./sprites/mortalis-logo.jpg";
@@ -285,15 +294,115 @@ const FAQ: Faq[] = [
   },
 ];
 
-function NavLink({ label, target }: { label: string; target: string }) {
+type NavItem = { label: string; target: string };
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "NFTs", target: "characters" },
+  { label: "Box", target: "box" },
+  { label: "How", target: "how" },
+  { label: "Roadmap", target: "roadmap" },
+];
+
+function NavLink({
+  label,
+  target,
+  active,
+  onClick,
+}: {
+  label: string;
+  target: string;
+  active?: boolean;
+  onClick?: () => void;
+}) {
   return (
     <a
       href={`#${target}`}
-      className="font-display hover:opacity-80 transition-opacity"
-      style={{ fontSize: 10, color: "var(--mort-bone)" }}
+      className={`nav-link${active ? " is-active" : ""}`}
+      onClick={onClick}
     >
       {label}
     </a>
+  );
+}
+
+function useHeaderScrolled(threshold = 8) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > threshold);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [threshold]);
+  return scrolled;
+}
+
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState<string>(ids[0] ?? "");
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const els = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (els.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target.id) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [ids]);
+  return active;
+}
+
+function Reveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      className={`reveal${visible ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -324,6 +433,8 @@ function Tape() {
   );
 }
 
+const SECTION_IDS = ["top", "characters", "box", "how", "roadmap"];
+
 function App() {
   const wallet = useWallet();
   const [quantity, setQuantity] = useState(1);
@@ -331,16 +442,33 @@ function App() {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [txPending, setTxPending] = useState(false);
   const [txError, setTxError] = useState<string | null>(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const totalEth = useMemo(() => totalEthForQuantity(quantity), [quantity]);
   const onBase = wallet.chainId === BASE_CHAIN_ID;
   const contractConfigured = isContractConfigured();
+  const scrolled = useHeaderScrolled();
+  const activeSection = useActiveSection(SECTION_IDS);
+  const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
 
   useEffect(() => {
     if (!copied) return;
     const t = setTimeout(() => setCopied(false), 1600);
     return () => clearTimeout(t);
   }, [copied]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileNavOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [mobileNavOpen]);
 
   const handleMint = async () => {
     setTxError(null);
@@ -379,11 +507,8 @@ function App() {
       <Tape />
 
       {/* Header */}
-      <header
-        className="sticky top-0 z-40"
-        style={{ background: "var(--mort-bg)", borderBottom: "2px solid var(--mort-line)" }}
-      >
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+      <header className={`site-header sticky top-0 z-40${scrolled ? " is-scrolled" : ""}`}>
+        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between gap-4">
           <a href="#top" className="flex items-center gap-3 group">
             <span className="mortalis-logo-mark mortalis-logo-mark--sm">
               <img
@@ -400,10 +525,14 @@ function App() {
             </span>
           </a>
           <nav className="hidden md:flex items-center gap-8">
-            <NavLink label="NFTs" target="characters" />
-            <NavLink label="Box" target="box" />
-            <NavLink label="How" target="how" />
-            <NavLink label="Roadmap" target="roadmap" />
+            {NAV_ITEMS.map((item) => (
+              <NavLink
+                key={item.target}
+                label={item.label}
+                target={item.target}
+                active={activeSection === item.target}
+              />
+            ))}
           </nav>
           <div className="flex items-center gap-3">
             {wallet.address ? (
@@ -436,15 +565,76 @@ function App() {
               <button
                 onClick={() => wallet.connect()}
                 disabled={wallet.connecting}
-                className="pixel-btn"
+                className="pixel-btn hidden sm:inline-block"
                 style={{ fontSize: 10 }}
               >
                 {wallet.connecting ? "Connecting…" : "Connect Wallet"}
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={mobileNavOpen}
+              aria-controls="mobile-nav"
+              className="mobile-nav-toggle md:hidden"
+            >
+              <Menu size={18} />
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Mobile nav panel */}
+      <div
+        id="mobile-nav"
+        className={`mobile-nav-panel${mobileNavOpen ? " is-open" : ""}`}
+        aria-hidden={!mobileNavOpen}
+        role="dialog"
+        aria-modal="true"
+      >
+        <div className="flex items-center justify-between">
+          <span
+            className="font-display tracking-widest"
+            style={{ fontSize: 13, color: "var(--mort-bone)" }}
+          >
+            MORTALIS
+          </span>
+          <button
+            type="button"
+            onClick={closeMobileNav}
+            aria-label="Close menu"
+            className="mobile-nav-toggle"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <nav className="mobile-nav-list" aria-label="Mobile navigation">
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.target}
+              href={`#${item.target}`}
+              onClick={closeMobileNav}
+              className={activeSection === item.target ? "is-active" : ""}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        {!wallet.address ? (
+          <button
+            onClick={() => {
+              closeMobileNav();
+              wallet.connect();
+            }}
+            disabled={wallet.connecting}
+            className="pixel-btn mt-6 self-start"
+            style={{ fontSize: 11 }}
+          >
+            {wallet.connecting ? "Connecting…" : "Connect Wallet"}
+          </button>
+        ) : null}
+      </div>
 
       {/* HERO */}
       <section
@@ -522,6 +712,7 @@ function App() {
                         alt={`${s.name} pixel art`}
                         className="pixel-img w-full h-full object-cover"
                         loading="lazy"
+                        decoding="async"
                       />
                     </div>
                     <span
@@ -741,29 +932,31 @@ function App() {
       {/* CHAPTER I — Generative NFT System */}
       <section id="characters" className="relative">
         <div className="mx-auto max-w-6xl px-4 py-20">
-          <div className="mb-12">
-            <p
-              className="font-display mb-3"
-              style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
-            >
-              // CHAPTER I · GENERATIVE LAYERED NFT
-            </p>
-            <h2
-              className="font-display mb-4"
-              style={{ fontSize: 24, color: "var(--mort-bone)" }}
-            >
-              4 Species Base Characters
-            </h2>
-            <p
-              className="font-pixel max-w-3xl leading-snug"
-              style={{ fontSize: 20, color: "var(--mort-ash)" }}
-            >
-              MORTALIS is built from a combination of modular layers and compatibility logic: species,
-              element overlay, eyes, head, body, accessory, aura, mutation, and decay state.
-              Genesis supply is fixed at {TOTAL_SUPPLY.toLocaleString()} unique NFTs.
-            </p>
-            <div className="pixel-rule mt-6 w-32" />
-          </div>
+          <Reveal>
+            <div className="mb-12">
+              <p
+                className="font-display mb-3"
+                style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
+              >
+                // CHAPTER I · GENERATIVE LAYERED NFT
+              </p>
+              <h2
+                className="font-display mb-4"
+                style={{ fontSize: 24, color: "var(--mort-bone)" }}
+              >
+                4 Species Base Characters
+              </h2>
+              <p
+                className="font-pixel max-w-3xl leading-snug"
+                style={{ fontSize: 20, color: "var(--mort-ash)" }}
+              >
+                MORTALIS is built from a combination of modular layers and compatibility logic: species,
+                element overlay, eyes, head, body, accessory, aura, mutation, and decay state.
+                Genesis supply is fixed at {TOTAL_SUPPLY.toLocaleString()} unique NFTs.
+              </p>
+              <div className="pixel-rule mt-6 w-32" />
+            </div>
+          </Reveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {SPECIES.map((s, idx) => (
@@ -779,6 +972,7 @@ function App() {
                     alt={`${s.name} pixel art`}
                     className="pixel-img w-full h-full object-cover"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div>
@@ -963,6 +1157,8 @@ function App() {
                   src={hatchboxImg}
                   alt="Mystery hatch box"
                   className="pixel-img w-56 h-56 md:w-64 md:h-64 animate-bobSlow"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <span
                   className="particle absolute top-2 left-2 w-2 h-2"
@@ -1205,6 +1401,22 @@ function App() {
                       )}
                     </button>
 
+                    {/* Trust badges */}
+                    <div className="mint-trust-row">
+                      <span>
+                        <Shield size={10} color="var(--mort-orchid)" />
+                        No admin keys
+                      </span>
+                      <span>
+                        <Sparkles size={10} color="var(--mort-orange)" />
+                        On-chain reveal
+                      </span>
+                      <span>
+                        <Lock size={10} color="var(--mort-gold)" />
+                        Ownership renounced
+                      </span>
+                    </div>
+
                     {/* Status / error line */}
                     <div className="mt-3 min-h-[18px]">
                       {wallet.error ? (
@@ -1280,27 +1492,29 @@ function App() {
         }}
       >
         <div className="mx-auto max-w-6xl px-4 py-20">
-          <div className="mb-12">
-            <p
-              className="font-display mb-3"
-              style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
-            >
-              // CHAPTER II
-            </p>
-            <h2
-              className="font-display mb-4"
-              style={{ fontSize: 24, color: "var(--mort-bone)" }}
-            >
-              How It Works
-            </h2>
-            <p
-              className="font-pixel max-w-2xl leading-snug"
-              style={{ fontSize: 20, color: "var(--mort-ash)" }}
-            >
-              Your pet is a digital lifeform. Here's its journey from egg to memorial:
-            </p>
-            <div className="pixel-rule mt-6 w-32" />
-          </div>
+          <Reveal>
+            <div className="mb-12">
+              <p
+                className="font-display mb-3"
+                style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
+              >
+                // CHAPTER II
+              </p>
+              <h2
+                className="font-display mb-4"
+                style={{ fontSize: 24, color: "var(--mort-bone)" }}
+              >
+                How It Works
+              </h2>
+              <p
+                className="font-pixel max-w-2xl leading-snug"
+                style={{ fontSize: 20, color: "var(--mort-ash)" }}
+              >
+                Your pet is a digital lifeform. Here's its journey from egg to memorial:
+              </p>
+              <div className="pixel-rule mt-6 w-32" />
+            </div>
+          </Reveal>
 
           <div className="grid md:grid-cols-2 gap-6 mb-14">
             {MECHANICS.map((m) => (
@@ -1383,27 +1597,29 @@ function App() {
       {/* CHAPTER III — Roadmap */}
       <section id="roadmap" style={{ background: "var(--mort-bg)" }}>
         <div className="mx-auto max-w-6xl px-4 py-20">
-          <div className="mb-12">
-            <p
-              className="font-display mb-3"
-              style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
-            >
-              // CHAPTER III
-            </p>
-            <h2
-              className="font-display mb-4"
-              style={{ fontSize: 24, color: "var(--mort-bone)" }}
-            >
-              Roadmap
-            </h2>
-            <p
-              className="font-pixel max-w-2xl leading-snug"
-              style={{ fontSize: 20, color: "var(--mort-ash)" }}
-            >
-              Four execution phases from testnet to mainnet to V2. Honest. No fluff.
-            </p>
-            <div className="pixel-rule mt-6 w-32" />
-          </div>
+          <Reveal>
+            <div className="mb-12">
+              <p
+                className="font-display mb-3"
+                style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
+              >
+                // CHAPTER III
+              </p>
+              <h2
+                className="font-display mb-4"
+                style={{ fontSize: 24, color: "var(--mort-bone)" }}
+              >
+                Roadmap
+              </h2>
+              <p
+                className="font-pixel max-w-2xl leading-snug"
+                style={{ fontSize: 20, color: "var(--mort-ash)" }}
+              >
+                Four execution phases from testnet to mainnet to V2. Honest. No fluff.
+              </p>
+              <div className="pixel-rule mt-6 w-32" />
+            </div>
+          </Reveal>
 
           <div className="space-y-6">
             {PHASES.map((p) => (
