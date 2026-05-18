@@ -8,11 +8,25 @@ const MINT_ABI = [
     stateMutability: "payable",
     type: "function",
   },
+  {
+    inputs: [
+      { internalType: "bytes32[]", name: "proof", type: "bytes32[]" },
+      { internalType: "uint256", name: "quantity", type: "uint256" },
+    ],
+    name: "mintWhitelist",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
 ] as const;
 
 export const MINT_PRICE_ETH = "0.001";
+export const WL_PRICE_ETH = "0"; // FREE for whitelist
 export const MAX_PER_TX = 10;
+export const MAX_WL_PER_WALLET = 1;
 export const TOTAL_SUPPLY = 3333;
+export const WL_SUPPLY = 333; // 10% for whitelist
+export const PUBLIC_SUPPLY = 3000; // 90% for public
 
 export const CONTRACT_ADDRESS = (
   (import.meta.env.VITE_CONTRACT_ADDRESS as string | undefined) ??
@@ -50,6 +64,41 @@ export async function mint(
     args: [BigInt(quantity)],
   });
   const value = parseEther(MINT_PRICE_ETH) * BigInt(quantity);
+  const hash = (await window.ethereum.request({
+    method: "eth_sendTransaction",
+    params: [
+      {
+        from,
+        to: CONTRACT_ADDRESS,
+        value: "0x" + value.toString(16),
+        data,
+      },
+    ],
+  })) as `0x${string}`;
+  return hash;
+}
+
+export async function mintWhitelist(
+  from: `0x${string}`,
+  proof: string[]
+): Promise<`0x${string}`> {
+  if (!window.ethereum) throw new Error("No wallet detected");
+  if (!isContractConfigured()) {
+    throw new Error(
+      "Genesis hatch box drop hasn't gone live yet — contract will be revealed at launch."
+    );
+  }
+  
+  // Whitelist mint is always quantity 1 and FREE
+  const data = encodeFunctionData({
+    abi: MINT_ABI,
+    functionName: "mintWhitelist",
+    args: [proof as `0x${string}`[], BigInt(1)],
+  });
+  
+  // Value is 0 for whitelist (FREE)
+  const value = parseEther(WL_PRICE_ETH);
+  
   const hash = (await window.ethereum.request({
     method: "eth_sendTransaction",
     params: [

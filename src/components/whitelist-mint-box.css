@@ -1,0 +1,360 @@
+/* ============================================
+   WHITELIST MINT BOX STYLES
+   ============================================ */
+
+.whitelist-mint-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 30, 0.9));
+  border: 2px solid var(--mort-gray);
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.whitelist-mint-box.wl-active {
+  border-color: var(--mort-green);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.whitelist-mint-box.wl-claimed {
+  border-color: var(--mort-orchid);
+}
+
+.whitelist-mint-box.public-only {
+  border-color: var(--mort-orange);
+}
+
+.whitelist-mint-box.success {
+  border-color: var(--mort-green);
+  background: linear-gradient(135deg, rgba(0, 100, 0, 0.3), rgba(0, 150, 0, 0.4));
+  animation: pulse-success 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-success {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.5); }
+}
+
+/* Header */
+.whitelist-mint-box-header {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--mort-gray);
+}
+
+.whitelist-mint-box-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.whitelist-mint-box-badge.wl {
+  background: rgba(0, 255, 0, 0.2);
+  border: 1px solid var(--mort-green);
+  color: var(--mort-green);
+  animation: pulse-wl-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-wl-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.whitelist-mint-box-badge.claimed {
+  background: rgba(198, 109, 222, 0.2);
+  border: 1px solid var(--mort-orchid);
+  color: var(--mort-orchid);
+}
+
+.whitelist-mint-box-badge.not-wl {
+  background: rgba(255, 107, 0, 0.2);
+  border: 1px solid var(--mort-orange);
+  color: var(--mort-orange);
+}
+
+/* Content */
+.whitelist-mint-box-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+}
+
+.whitelist-mint-box-icon {
+  color: var(--mort-green);
+}
+
+.whitelist-mint-box-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  color: var(--mort-bone);
+  line-height: 1.4;
+}
+
+.whitelist-mint-box-subtitle {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: var(--mort-gray);
+  line-height: 1.3;
+}
+
+/* Price Display */
+.whitelist-mint-box-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+  width: 100%;
+}
+
+.price-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.5rem;
+  color: var(--mort-bone);
+  text-shadow: 0 0 10px var(--mort-orange);
+}
+
+.whitelist-mint-box.wl-active .price-value {
+  color: var(--mort-green);
+  text-shadow: 0 0 10px var(--mort-green);
+}
+
+.price-label {
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: var(--mort-gray);
+  text-transform: uppercase;
+}
+
+/* Quantity Selector */
+.whitelist-mint-box-quantity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+}
+
+.whitelist-mint-box-quantity button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mort-surface);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+  color: var(--mort-bone);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.whitelist-mint-box-quantity button:hover:not(:disabled) {
+  background: var(--mort-orange);
+  border-color: var(--mort-orange);
+  transform: translateY(-2px);
+}
+
+.whitelist-mint-box-quantity button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.whitelist-mint-box-quantity span {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.5rem;
+  color: var(--mort-bone);
+  min-width: 3rem;
+  text-align: center;
+}
+
+/* Total */
+.whitelist-mint-box-total {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  color: var(--mort-bone);
+  padding: 0.5rem 1rem;
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid var(--mort-orange);
+  border-radius: 4px;
+}
+
+/* Supply Display */
+.whitelist-mint-box-supply {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--mort-gray);
+  border-radius: 4px;
+}
+
+.supply-label {
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: var(--mort-gray);
+  text-transform: uppercase;
+}
+
+.supply-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.9rem;
+  color: var(--mort-bone);
+}
+
+.supply-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.supply-bar-fill {
+  height: 100%;
+  transition: width 0.5s ease-out;
+}
+
+.supply-bar-fill.wl {
+  background: linear-gradient(90deg, var(--mort-green), #00ff00);
+  box-shadow: 0 0 10px var(--mort-green);
+}
+
+.supply-bar-fill.public {
+  background: linear-gradient(90deg, var(--mort-orange-deep), var(--mort-orange));
+  box-shadow: 0 0 10px var(--mort-orange);
+}
+
+/* Mint Button */
+.whitelist-mint-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: var(--mort-orange);
+  border: none;
+  border-radius: 4px;
+  color: var(--mort-bg);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.whitelist-mint-button.wl {
+  background: var(--mort-green);
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
+}
+
+.whitelist-mint-button.wl:hover:not(:disabled) {
+  background: #00ff00;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 255, 0, 0.4);
+}
+
+.whitelist-mint-button.public {
+  background: var(--mort-orange);
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+}
+
+.whitelist-mint-button.public:hover:not(:disabled) {
+  background: var(--mort-orange-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 0, 0.4);
+}
+
+.whitelist-mint-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Messages */
+.whitelist-mint-box-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff6666;
+  border-radius: 4px;
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  color: #ff6666;
+  width: 100%;
+}
+
+.whitelist-mint-box-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 107, 0, 0.1);
+  border: 1px solid var(--mort-orange);
+  border-radius: 4px;
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: var(--mort-orange);
+  width: 100%;
+  text-align: left;
+}
+
+.whitelist-mint-box-note {
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: var(--mort-gray);
+  text-align: center;
+}
+
+/* Divider */
+.whitelist-mint-box-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--mort-gray);
+  margin: 0.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .whitelist-mint-box {
+    padding: 1.5rem;
+  }
+
+  .whitelist-mint-box-title {
+    font-size: 0.85rem;
+  }
+
+  .price-value {
+    font-size: 1.2rem;
+  }
+
+  .whitelist-mint-button {
+    font-size: 0.7rem;
+    padding: 0.875rem 1.5rem;
+  }
+}
