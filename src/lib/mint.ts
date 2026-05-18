@@ -12,7 +12,7 @@ const MINT_ABI = [
 
 export const MINT_PRICE_ETH = "0.001";
 export const MAX_PER_TX = 10;
-export const TOTAL_SUPPLY = 5000;
+export const TOTAL_SUPPLY = 3333;
 
 export const CONTRACT_ADDRESS = (
   (import.meta.env.VITE_CONTRACT_ADDRESS as string | undefined) ??
