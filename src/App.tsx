@@ -31,7 +31,6 @@ import {
 import "./App.css";
 import slimeImg from "./sprites/slime.png";
 import hatchboxImg from "./sprites/hatchbox.png";
-import generativeSystemImg from "./sprites/generative-trait-system.png";
 import voidlingImg from "./sprites/characters/voidling.gif";
 import mosslingImg from "./sprites/characters/mossling.gif";
 import shardlingImg from "./sprites/characters/shardling.gif";
@@ -862,37 +861,6 @@ function App() {
                 </div>
               </article>
             ))}
-          </div>
-
-          <div className="pixel-frame p-4 md:p-6 mb-12">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5">
-              <div>
-                <p
-                  className="font-display mb-2"
-                  style={{ fontSize: 11, color: "var(--mort-orchid)" }}
-                >
-                  // COMPLETE NFT BLUEPRINT
-                </p>
-                <h3
-                  className="font-display"
-                  style={{ fontSize: 18, color: "var(--mort-bone)" }}
-                >
-                  Generative Trait System
-                </h3>
-              </div>
-              <p
-                className="font-pixel max-w-xl leading-snug"
-                style={{ fontSize: 18, color: "var(--mort-ash)" }}
-              >
-                Reference board dari user: species, layer mix, element system, decay stages,
-                compatibility logic, dan genesis distribution dalam satu visual.
-              </p>
-            </div>
-            <img
-              src={generativeSystemImg}
-              alt="MORTALIS generative trait system reference"
-              className="pixel-img generative-board w-full"
-            />
           </div>
 
           <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6 mb-6">
