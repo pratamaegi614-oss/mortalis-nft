@@ -12,7 +12,6 @@ import {
   Heart,
   Hourglass,
   Skull,
-  Egg,
   Sprout,
   Lock,
   Shield,
@@ -31,10 +30,8 @@ import {
 } from "lucide-react";
 import "./App.css";
 import slimeImg from "./sprites/slime.png";
-import wispImg from "./sprites/wisp.png";
-import skitterImg from "./sprites/skitter.png";
-import mosslingImg from "./sprites/mossling.png";
 import hatchboxImg from "./sprites/hatchbox.png";
+import generativeSystemImg from "./sprites/generative-trait-system.png";
 import { BASE_CHAIN_ID, shortAddress, useWallet } from "./lib/wallet";
 import {
   CONTRACT_ADDRESS,
@@ -52,83 +49,78 @@ type Species = {
   key: string;
   name: string;
   title: string;
-  sprite: string;
+  affinity: string;
   tagline: string;
   lore: string;
-  vitality: number;
-  appetite: number;
-  charm: number;
+  compatible: string[];
+  incompatible: string[];
   frameClass: string;
-  glowClass: string;
-  bobClass: string;
   rarity: string;
   accent: string;
+  glow: string;
+  portraitPosition: string;
 };
 
 const SPECIES: Species[] = [
   {
-    key: "slime",
-    name: "Slime",
-    title: "The Eternal",
-    sprite: slimeImg,
-    tagline: "Liquid. Sluggish. Unbreakable.",
-    lore: "The most primitive form. Slow, but the most resilient — it bounces back as long as a single drop survives.",
-    vitality: 65,
-    appetite: 35,
-    charm: 50,
-    frameClass: "pixel-frame-green",
-    glowClass: "animate-pulseGlow",
-    bobClass: "animate-bob",
-    rarity: "Common · 40%",
-    accent: "var(--mort-green)",
-  },
-  {
-    key: "wisp",
-    name: "Wisp",
-    title: "The Drifting",
-    sprite: wispImg,
-    tagline: "A soul that forgot its way home.",
-    lore: "Fragile existence. Flickering glow. Yet the most coveted on the secondary market.",
-    vitality: 40,
-    appetite: 50,
-    charm: 70,
+    key: "voidling",
+    name: "Voidling",
+    title: "Shadow of the Digital Void",
+    affinity: "Void",
+    tagline: "Semakin dilupakan, ia menghilang.",
+    lore: "Makhluk bayangan dari kekosongan digital dengan glowing eyes, shadow cloak, glitch particles, dan void aura.",
+    compatible: ["Horns", "Glitch marks", "Void aura", "Corrupted accessories"],
+    incompatible: ["Flowers", "Vines", "Nature growth"],
     frameClass: "pixel-frame-purple",
-    glowClass: "animate-pulseGlow",
-    bobClass: "animate-bobSlow",
-    rarity: "Uncommon · 25%",
+    rarity: "Genesis · 30%",
     accent: "var(--mort-orchid)",
-  },
-  {
-    key: "skitter",
-    name: "Skitter",
-    title: "The Hungry",
-    sprite: skitterImg,
-    tagline: "Always hungry. Always restless.",
-    lore: "An insectoid scavenger. Fast, aggressive, demands the most feedings — its keeper must show up.",
-    vitality: 45,
-    appetite: 75,
-    charm: 30,
-    frameClass: "pixel-frame-orange",
-    glowClass: "animate-pulseGlow",
-    bobClass: "animate-bob",
-    rarity: "Rare · 20%",
-    accent: "var(--mort-orange-deep)",
+    glow: "rgba(198, 109, 222, 0.35)",
+    portraitPosition: "0% 0%",
   },
   {
     key: "mossling",
     name: "Mossling",
-    title: "The Rooted",
-    sprite: mosslingImg,
-    tagline: "Slow to grow. Hard to kill.",
-    lore: "A walking shrub. The highest Vitality of any species — sometimes it outlives its keeper.",
-    vitality: 75,
-    appetite: 60,
-    charm: 55,
-    frameClass: "pixel-frame-gold",
-    glowClass: "",
-    bobClass: "animate-bobSlow",
-    rarity: "Epic · 15%",
-    accent: "var(--mort-gold)",
+    title: "Living Moss Guardian",
+    affinity: "Earth",
+    tagline: "Jika tak dirawat, ia mengering menjadi kayu mati.",
+    lore: "Creature lumut hidup dengan round organic body, moss texture, forest details, flowers, roots, mushrooms, dan spores.",
+    compatible: ["Mushroom", "Branches", "Flowers", "Roots", "Spores"],
+    incompatible: ["Fire crown", "Lava cracks", "Heavy glitch"],
+    frameClass: "pixel-frame-green",
+    rarity: "Genesis · 30%",
+    accent: "var(--mort-green)",
+    glow: "rgba(90, 154, 71, 0.35)",
+    portraitPosition: "33% 0%",
+  },
+  {
+    key: "shardling",
+    name: "Shardling",
+    title: "Crystal Memory Fragment",
+    affinity: "Arcane",
+    tagline: "Retak perlahan saat kesepian.",
+    lore: "Makhluk crystal yang terbentuk dari memory fragments dengan crystal spikes, arcane glow, mineral body, dan floating shards.",
+    compatible: ["Crystal growth", "Arcane marks", "Cracks", "Floating shards"],
+    incompatible: ["Vines", "Flowers", "Smoke body"],
+    frameClass: "pixel-frame-blue",
+    rarity: "Genesis · 15%",
+    accent: "#64d7f3",
+    glow: "rgba(100, 215, 243, 0.3)",
+    portraitPosition: "66% 0%",
+  },
+  {
+    key: "wisp",
+    name: "Wisp",
+    title: "Burning Soul Spirit",
+    affinity: "Fire / Soul",
+    tagline: "Padam jika tak diberi makanan.",
+    lore: "Spirit api kecil dengan ghost body, floating flame, ember particles, smoke halo, cursed candles, dan soul marks.",
+    compatible: ["Flame crown", "Smoke halo", "Cursed candles", "Soul marks"],
+    incompatible: ["Mushrooms", "Bark skin", "Crystal spikes"],
+    frameClass: "pixel-frame-orange",
+    rarity: "Genesis · 25%",
+    accent: "var(--mort-orange-deep)",
+    glow: "rgba(217, 72, 59, 0.35)",
+    portraitPosition: "100% 0%",
   },
 ];
 
@@ -140,11 +132,39 @@ type Element = {
 };
 
 const ELEMENTS: Element[] = [
-  { name: "Fire", desc: "+30% decay, reward 1.2×", Icon: Flame, color: "var(--mort-orange-deep)" },
-  { name: "Water", desc: "-20% decay, feed 1.5×", Icon: Droplet, color: "#6ca5d4" },
-  { name: "Earth", desc: "Balanced. Vanilla.", Icon: Mountain, color: "var(--mort-gold)" },
-  { name: "Air", desc: "Feed 0.7×, reward 0.8×", Icon: Wind, color: "var(--mort-green)" },
-  { name: "Void", desc: "Dramatic. Reward 1.5×", Icon: Ghost, color: "var(--mort-orchid)" },
+  { name: "Fire", desc: "Ember particles, lava cracks, orange/red glow.", Icon: Flame, color: "var(--mort-orange-deep)" },
+  { name: "Water", desc: "Bubbles, mist, and water drip overlays.", Icon: Droplet, color: "#6ca5d4" },
+  { name: "Earth", desc: "Roots, moss, spores, and vines.", Icon: Mountain, color: "var(--mort-green)" },
+  { name: "Air", desc: "Wind particles, floating cloth, light aura.", Icon: Wind, color: "#b7d7df" },
+  { name: "Void", desc: "Glitch pixels, shadow distortion, purple corruption.", Icon: Ghost, color: "var(--mort-orchid)" },
+];
+
+const TRAIT_LAYERS = [
+  "Background",
+  "Species Base",
+  "Element Overlay",
+  "Eyes",
+  "Head Trait",
+  "Body Trait",
+  "Accessory",
+  "Aura",
+  "Mutation",
+  "Decay State",
+];
+
+const BACKGROUNDS = ["Graveyard", "Abyss", "Forest", "Ruins", "Moon Shrine", "Forgotten Cave"];
+const EYES = ["Glow", "Hollow", "Spiral", "X Eyes", "Triple Eyes", "Flame Eyes"];
+const HEAD_TRAITS = ["Horns", "Crown", "Mushroom", "Halo", "Crystal Growth", "Bone Mask"];
+const BODY_TRAITS = ["Scars", "Cracks", "Rot Marks", "Corruption", "Chains", "Runes"];
+const ACCESSORIES = ["Necklace", "Lantern", "Soul Orb", "Bell", "Skull Charm"];
+const AURAS = ["Flame", "Poison", "Arcane", "Void", "Lightning", "Mist"];
+const MUTATIONS = ["Corrupted Mossling", "Black Flame Wisp", "Void Crystal Shardling", "Hollow Voidling"];
+
+const COMPATIBILITY_ROWS = [
+  { trait: "Mushroom", voidling: "×", mossling: "✓", shardling: "×", wisp: "×" },
+  { trait: "Crystal Horn", voidling: "×", mossling: "×", shardling: "✓", wisp: "×" },
+  { trait: "Flame Halo", voidling: "×", mossling: "×", shardling: "×", wisp: "✓" },
+  { trait: "Void Glitch", voidling: "✓", mossling: "Rare", shardling: "Rare", wisp: "Rare" },
 ];
 
 type Mechanic = {
@@ -158,25 +178,25 @@ const MECHANICS: Mechanic[] = [
   {
     num: "01",
     title: "MINT",
-    desc: "Buy a sealed hatch box at the genesis drop. Species, element, and stats are rolled on-chain — you won't know what hatches until the box cracks open.",
+    desc: "Mint NFT egg dan dapatkan pet dengan stats, species, element, layer traits, mutation chance, dan rarity yang dirandom sesuai rules.",
     Icon: ShoppingBag,
   },
   {
     num: "02",
     title: "FEED",
-    desc: "Every pet must be fed within a 28-day window (modulated by Vitality and Element). Miss it, and the stage decays automatically: HEALTHY → WEAK → DYING → SKELETAL.",
+    desc: "Kirim ETH atau token untuk memberi makan pet-mu dan reset timer decay sebelum visualnya melemah.",
     Icon: Heart,
   },
   {
     num: "03",
     title: "DECAY",
-    desc: "Decay is deterministic and lives entirely on-chain. No server. No admin. block.timestamp is the absolute judge.",
+    desc: "Jika tidak diberi makan, pet masuk ke stage decay bertahap: HEALTHY → WEAK → DYING → SKELETAL.",
     Icon: Hourglass,
   },
   {
     num: "04",
-    title: "BURN",
-    desc: "After 28 days without a feed, anyone can call executeDeath() and claim a bounty. The NFT is wiped from supply — permanently. Only a tombstone remains.",
+    title: "DEATH & BURN",
+    desc: "Setelah periode tanpa feed, pet bisa dieksekusi dan di-burn permanen. Supply berkurang dan tidak ada remint.",
     Icon: Skull,
   },
 ];
@@ -190,12 +210,11 @@ type Stage = {
 };
 
 const STAGES: Stage[] = [
-  { name: "HATCH", desc: "The egg cracks. First eyes open.", Icon: Egg, color: "var(--mort-orchid)" },
-  { name: "HEALTHY", desc: "Bouncy. Glowing. Happy idle.", Icon: Sprout, color: "var(--mort-green)" },
-  { name: "WEAK", desc: "Colors fade. Movement slows.", Icon: Hourglass, color: "var(--mort-gold)" },
-  { name: "DYING", desc: "Glitched visuals. Flickering.", Icon: Bell, color: "var(--mort-orange-deep)", faded: true },
-  { name: "SKELETAL", desc: "Down to the bones. Final warning.", Icon: Skull, color: "#9ca3af", faded: true },
-  { name: "BURNED", desc: "Permanently burned from the chain.", Icon: Flame, color: "var(--mort-red)", faded: true },
+  { name: "HEALTHY", desc: "Bright colors, active particles, clean visuals.", Icon: Sprout, color: "var(--mort-green)" },
+  { name: "WEAK", desc: "Faded colors, slower effects, light cracks.", Icon: Hourglass, color: "var(--mort-gold)" },
+  { name: "DYING", desc: "Glitch effects, broken particles, corrupted visuals.", Icon: Bell, color: "var(--mort-orange-deep)", faded: true },
+  { name: "SKELETAL", desc: "Exposed bones, dying aura, low opacity.", Icon: Skull, color: "#9ca3af", faded: true },
+  { name: "BURNED", desc: "Permanently removed from supply and archived.", Icon: Flame, color: "var(--mort-red)", faded: true },
 ];
 
 type Phase = {
@@ -290,24 +309,6 @@ function NavLink({ label, target }: { label: string; target: string }) {
     >
       {label}
     </a>
-  );
-}
-
-function StatBar({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
-  const pct = Math.min(100, (value / max) * 100);
-  return (
-    <div className="flex flex-col gap-1">
-      <div
-        className="flex justify-between font-display"
-        style={{ fontSize: 9, color: "var(--mort-bone)" }}
-      >
-        <span>{label}</span>
-        <span style={{ color: "var(--mort-orchid)" }}>{value}</span>
-      </div>
-      <div className="hpbar w-full">
-        <div className="hpbar-fill" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
   );
 }
 
@@ -413,7 +414,7 @@ function App() {
             </span>
           </a>
           <nav className="hidden md:flex items-center gap-8">
-            <NavLink label="Pets" target="characters" />
+            <NavLink label="NFTs" target="characters" />
             <NavLink label="Box" target="box" />
             <NavLink label="How" target="how" />
             <NavLink label="Roadmap" target="roadmap" />
@@ -516,22 +517,24 @@ function App() {
               </div>
             </div>
 
-            {/* 2x2 species grid */}
             <div className="relative">
               <div className="grid grid-cols-2 gap-4">
                 {SPECIES.map((s, idx) => (
                   <div
                     key={s.key}
-                    className={`${s.frameClass} p-4 flex flex-col items-center`}
+                    className={`${s.frameClass} p-3 flex flex-col items-center gap-3`}
                     style={{ transform: idx % 2 === 0 ? "translateY(0)" : "translateY(16px)" }}
                   >
-                    <img
-                      src={s.sprite}
-                      alt={s.name}
-                      className={`pixel-img w-24 h-24 ${s.bobClass} ${s.glowClass} sprite-glow`}
+                    <div
+                      className="generative-portrait w-full h-32"
+                      style={{
+                        backgroundImage: `url(${generativeSystemImg})`,
+                        backgroundPosition: s.portraitPosition,
+                        boxShadow: `inset 0 0 0 1px ${s.accent}, 0 0 24px ${s.glow}`,
+                      }}
                     />
                     <span
-                      className="font-display mt-3"
+                      className="font-display"
                       style={{ fontSize: 10, color: "var(--mort-bone)" }}
                     >
                       {s.name}
@@ -744,7 +747,7 @@ function App() {
         </div>
       </section>
 
-      {/* CHAPTER I — Meet the Mortals */}
+      {/* CHAPTER I — Generative NFT System */}
       <section id="characters" className="relative">
         <div className="mx-auto max-w-6xl px-4 py-20">
           <div className="mb-12">
@@ -752,49 +755,43 @@ function App() {
               className="font-display mb-3"
               style={{ fontSize: 11, color: "var(--mort-orange-deep)" }}
             >
-              // CHAPTER I
+              // CHAPTER I · GENERATIVE LAYERED NFT
             </p>
             <h2
               className="font-display mb-4"
               style={{ fontSize: 24, color: "var(--mort-bone)" }}
             >
-              Meet the Mortals
+              4 Species Base Characters
             </h2>
             <p
-              className="font-pixel max-w-2xl leading-snug"
+              className="font-pixel max-w-3xl leading-snug"
               style={{ fontSize: 20, color: "var(--mort-ash)" }}
             >
-              Four species ship in the Genesis drop. Every pet is rolled on-chain with unique
-              stats and one of five elements. Each combination shifts the survival meta.
+              MORTALIS dibentuk dari kombinasi modular layer dan compatibility logic: species,
+              element overlay, eyes, head, body, accessory, aura, mutation, dan decay state.
+              Genesis supply fixed di {TOTAL_SUPPLY.toLocaleString()} NFT unik.
             </p>
             <div className="pixel-rule mt-6 w-32" />
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SPECIES.map((s) => (
-              <article
-                key={s.key}
-                className={`${s.frameClass} p-6 flex flex-col gap-4`}
-              >
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {SPECIES.map((s, idx) => (
+              <article key={s.key} className={`${s.frameClass} p-6 flex flex-col gap-4`}>
                 <div
-                  className="flex items-center justify-center p-6"
+                  className="generative-portrait h-56"
                   style={{
-                    background: "var(--mort-bg)",
-                    border: "1px solid var(--mort-line)",
+                    backgroundImage: `url(${generativeSystemImg})`,
+                    backgroundPosition: s.portraitPosition,
+                    boxShadow: `inset 0 0 0 2px ${s.accent}, 0 0 28px ${s.glow}`,
                   }}
-                >
-                  <img
-                    src={s.sprite}
-                    alt={s.name}
-                    className={`pixel-img w-28 h-28 ${s.bobClass} ${s.glowClass} sprite-glow`}
-                  />
-                </div>
+                  aria-label={`${s.name} reference art`}
+                />
                 <div>
                   <p
                     className="font-display"
                     style={{ fontSize: 9, color: "var(--mort-ash)" }}
                   >
-                    {s.rarity}
+                    {idx + 1}. {s.rarity} · Element Affinity: {s.affinity}
                   </p>
                   <h3
                     className="font-display mt-2"
@@ -804,7 +801,7 @@ function App() {
                   </h3>
                   <p
                     className="font-display mt-1"
-                    style={{ fontSize: 9, color: "var(--mort-orchid)" }}
+                    style={{ fontSize: 9, color: s.accent }}
                   >
                     {s.title}
                   </p>
@@ -821,13 +818,165 @@ function App() {
                 >
                   {s.lore}
                 </p>
-                <div className="flex flex-col gap-3 mt-2">
-                  <StatBar label="Vitality" value={s.vitality} />
-                  <StatBar label="Appetite" value={s.appetite} />
-                  <StatBar label="Charm" value={s.charm} />
+                <div className="space-y-3 mt-auto">
+                  <div>
+                    <p className="font-display mb-2" style={{ fontSize: 8, color: s.accent }}>
+                      Compatible traits
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {s.compatible.map((trait) => (
+                        <span key={trait} className="trait-chip">
+                          {trait}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p
+                      className="font-display mb-2"
+                      style={{ fontSize: 8, color: "var(--mort-orange-deep)" }}
+                    >
+                      Incompatible
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {s.incompatible.map((trait) => (
+                        <span key={trait} className="trait-chip trait-chip-danger">
+                          {trait}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </article>
             ))}
+          </div>
+
+          <div className="pixel-frame p-4 md:p-6 mb-12">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5">
+              <div>
+                <p
+                  className="font-display mb-2"
+                  style={{ fontSize: 11, color: "var(--mort-orchid)" }}
+                >
+                  // COMPLETE NFT BLUEPRINT
+                </p>
+                <h3
+                  className="font-display"
+                  style={{ fontSize: 18, color: "var(--mort-bone)" }}
+                >
+                  Generative Trait System
+                </h3>
+              </div>
+              <p
+                className="font-pixel max-w-xl leading-snug"
+                style={{ fontSize: 18, color: "var(--mort-ash)" }}
+              >
+                Reference board dari user: species, layer mix, element system, decay stages,
+                compatibility logic, dan genesis distribution dalam satu visual.
+              </p>
+            </div>
+            <img
+              src={generativeSystemImg}
+              alt="MORTALIS generative trait system reference"
+              className="pixel-img generative-board w-full"
+            />
+          </div>
+
+          <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6 mb-6">
+            <div className="pixel-frame p-6">
+              <p
+                className="font-display mb-5"
+                style={{ fontSize: 12, color: "var(--mort-orchid)" }}
+              >
+                Trait Layer Structure
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                {TRAIT_LAYERS.map((layer) => (
+                  <div key={layer} className="trait-layer-card">
+                    <span>{layer}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {[
+                  ["Background", BACKGROUNDS],
+                  ["Eyes", EYES],
+                  ["Head", HEAD_TRAITS],
+                  ["Body", BODY_TRAITS],
+                  ["Accessory", ACCESSORIES],
+                  ["Aura", AURAS],
+                ].map(([title, items]) => (
+                  <div key={title as string}>
+                    <h4
+                      className="font-display mb-2"
+                      style={{ fontSize: 9, color: "var(--mort-bone)" }}
+                    >
+                      {title as string}
+                    </h4>
+                    <p
+                      className="font-pixel leading-tight"
+                      style={{ fontSize: 16, color: "var(--mort-ash)" }}
+                    >
+                      {(items as string[]).join(" · ")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pixel-frame p-6">
+              <p
+                className="font-display mb-5"
+                style={{ fontSize: 12, color: "var(--mort-gold)" }}
+              >
+                Mutation System
+              </p>
+              <p
+                className="font-pixel leading-snug mb-4"
+                style={{ fontSize: 18, color: "var(--mort-ash)" }}
+              >
+                Sebagian kecil NFT membuka trait pool tambahan. Mutation bersifat ultra rare
+                dan tetap mengikuti compatibility rules.
+              </p>
+              <div className="flex flex-col gap-2">
+                {MUTATIONS.map((mutation) => (
+                  <span key={mutation} className="trait-chip trait-chip-mutation">
+                    {mutation}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="pixel-frame p-6 overflow-x-auto">
+            <p
+              className="font-display mb-5"
+              style={{ fontSize: 12, color: "var(--mort-orchid)" }}
+            >
+              Compatibility Logic
+            </p>
+            <table className="compat-table w-full">
+              <thead>
+                <tr>
+                  <th>Trait</th>
+                  <th>Voidling</th>
+                  <th>Mossling</th>
+                  <th>Shardling</th>
+                  <th>Wisp</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPATIBILITY_ROWS.map((row) => (
+                  <tr key={row.trait}>
+                    <td>{row.trait}</td>
+                    <td>{row.voidling}</td>
+                    <td>{row.mossling}</td>
+                    <td>{row.shardling}</td>
+                    <td>{row.wisp}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -889,9 +1038,9 @@ function App() {
                 className="font-pixel mb-6 leading-snug"
                 style={{ fontSize: 20, color: "var(--mort-ash)" }}
               >
-                Every mint arrives as a sealed hatch box. Species, element, stats, and traits
-                stay hidden until the Genesis drop sells out — then the reveal goes live for
-                everyone at once.
+                Every mint arrives as a sealed hatch box. Species, element overlay, eyes,
+                head trait, body trait, accessory, aura, mutation, and decay state stay hidden
+                until the reveal goes live for everyone at once.
               </p>
 
               <ul className="space-y-3 mb-6">
@@ -913,7 +1062,7 @@ function App() {
                 <li className="flex items-start gap-3 font-pixel" style={{ fontSize: 18 }}>
                   <Sparkles size={16} color="var(--mort-orange)" className="mt-1 shrink-0" />
                   <span style={{ color: "var(--mort-bone)" }}>
-                    Rare traits: Albino · Twin · Cursed · Legendary holo shimmer.
+                    Mutation chance unlocks ultra-rare pools: Corrupted Mossling · Black Flame Wisp · Void Crystal Shardling · Hollow Voidling.
                   </span>
                 </li>
               </ul>
@@ -1157,14 +1306,14 @@ function App() {
         </div>
       </section>
 
-      {/* FIVE ELEMENTS */}
+      {/* ELEMENT SYSTEM */}
       <section style={{ background: "var(--mort-bg)" }}>
         <div className="mx-auto max-w-6xl px-4 py-16">
           <p
             className="font-display mb-8"
             style={{ fontSize: 11, color: "var(--mort-orchid)" }}
           >
-            // FIVE ELEMENTS · GAMEPLAY MODIFIERS
+            // ELEMENT SYSTEM · VISUAL MODIFIERS
           </p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {ELEMENTS.map((e) => (
@@ -1272,7 +1421,7 @@ function App() {
               className="font-display mb-6"
               style={{ fontSize: 12, color: "var(--mort-orchid)" }}
             >
-              Lifecycle — from hatch to memorial
+              Decay stages — visual evolution
             </p>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
               {STAGES.map((st) => (
