@@ -607,6 +607,52 @@ body {
   font-size: 0.95em;
 }
 
+/* Wordmark right-to-left purple shimmer */
+.wordmark-shimmer {
+  position: relative;
+  display: inline-block;
+  background:
+    linear-gradient(
+      100deg,
+      var(--mort-bone) 0%,
+      var(--mort-bone) 38%,
+      #e9b9ff 46%,
+      var(--mort-orchid) 50%,
+      #e9b9ff 54%,
+      var(--mort-bone) 62%,
+      var(--mort-bone) 100%
+    );
+  background-size: 250% 100%;
+  background-position: 200% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: wordmarkShimmer 5.5s ease-in-out infinite;
+  text-shadow: none;
+  filter: drop-shadow(0 0 6px rgba(198, 109, 222, 0.18));
+}
+@keyframes wordmarkShimmer {
+  0% {
+    background-position: 200% 50%;
+  }
+  60% {
+    background-position: -100% 50%;
+  }
+  100% {
+    background-position: -100% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wordmark-shimmer {
+    animation: none;
+    background: none;
+    color: var(--mort-bone);
+    -webkit-text-fill-color: var(--mort-bone);
+    filter: none;
+  }
+}
+
 .section-divider {
   border: 0;
   border-top: 2px solid var(--mort-line);
@@ -921,14 +967,29 @@ body {
   }
 }
 
-/* Inline tooltip on technical terms */
+/* Inline tooltip on technical terms.
+   The tooltip text is rendered via CSS pseudo-elements (content: attr(data-term))
+   so it does NOT appear in the document text content when the surrounding
+   paragraph is selected / copied. aria-label on the parent keeps it readable
+   for screen readers. */
 .term-tip {
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted currentColor;
   cursor: help;
 }
-.term-tip > .term-tip-bubble {
+.term-tip::before,
+.term-tip::after {
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition:
+    opacity 140ms ease-out,
+    transform 140ms ease-out;
+  z-index: 70;
+}
+.term-tip::before {
+  content: attr(data-term);
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
@@ -949,28 +1010,25 @@ body {
   text-transform: none;
   text-align: left;
   white-space: normal;
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity 140ms ease-out,
-    transform 140ms ease-out;
-  z-index: 70;
 }
-.term-tip > .term-tip-bubble::after {
+.term-tip::after {
   content: "";
   position: absolute;
-  top: 100%;
+  bottom: calc(100% + 2px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(4px);
   width: 0;
   height: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-top: 6px solid var(--mort-orchid);
 }
-.term-tip:hover > .term-tip-bubble,
-.term-tip:focus-visible > .term-tip-bubble,
-.term-tip:focus-within > .term-tip-bubble {
+.term-tip:hover::before,
+.term-tip:hover::after,
+.term-tip:focus-visible::before,
+.term-tip:focus-visible::after,
+.term-tip:focus-within::before,
+.term-tip:focus-within::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
@@ -979,7 +1037,8 @@ body {
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .term-tip > .term-tip-bubble {
+  .term-tip::before,
+  .term-tip::after {
     transition: none;
   }
 }

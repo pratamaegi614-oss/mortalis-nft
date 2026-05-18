@@ -465,11 +465,14 @@ function TermTip({
   style?: React.CSSProperties;
 }) {
   return (
-    <span className="term-tip" tabIndex={0} style={style}>
+    <span
+      className="term-tip"
+      tabIndex={0}
+      style={style}
+      data-term={term}
+      aria-label={term}
+    >
       {children}
-      <span className="term-tip-bubble" role="tooltip">
-        {term}
-      </span>
     </span>
   );
 }
@@ -775,8 +778,8 @@ function App() {
                 </span>
               </div>
 
-              <h1 className="wordmark mb-4">
-                MORT<span className="tri">△</span>LIS
+              <h1 className="wordmark wordmark-shimmer mb-4" aria-label="MORTALIS">
+                <span aria-hidden="true">MORTALIS</span>
               </h1>
 
               <p
